@@ -1,0 +1,9 @@
+SITE DA FEIRA - 8 IMAGENS
+
+Para publicar no Netlify Drop:
+1. Extraia este ZIP.
+2. Abra https://app.netlify.com/drop
+3. Arraste a PASTA site-feira-atualizado para a area de envio.
+4. Use o endereco gerado para criar o QR Code.
+
+Nao envie o ZIP sem extrair, nem somente o index.html: as imagens precisam estar junto na pasta imagens.
