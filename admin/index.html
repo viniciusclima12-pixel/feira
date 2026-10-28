@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#061d34">
+<title>Painel de fotos | Feira</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;--gold:#ffc52f}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#164568,#061d34 65%);color:#eef5ff}
+main{max-width:970px;margin:auto;padding:30px 18px 80px}h1{font-size:clamp(1.8rem,4vw,2.6rem);margin:12px 0}h2{font-size:1.15rem}
+a{color:var(--gold)}p{line-height:1.6}.muted{color:#b9c9dc}
+.card{border:1px solid #ffffff2b;background:#ffffff0b;border-radius:20px;padding:24px;margin:22px 0}
+label{display:block;font-weight:650;margin:16px 0 7px}input{display:block;width:100%;padding:13px;background:#04192b;border:1px solid #ffffff50;border-radius:10px;color:white;font:inherit}
+button{background:var(--gold);color:#071e34;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:750;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:white;border:1px solid #ffffff35}
+.danger{background:#ffdddd;color:#741a1a}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hidden{display:none!important}.status{min-height:26px;color:#ffe08a}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:18px}
+.photo{background:#04192b;border:1px solid #ffffff25;border-radius:14px;overflow:hidden}
+.photo img{width:100%;height:180px;object-fit:contain}.photo div{padding:12px}
+.photo strong{display:block;margin-bottom:12px;overflow-wrap:anywhere}
+</style></head><body><main>
+<div class="row"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Gerenciar fotos</h1><p class="muted">Adicione ou remova fotos sem editar o site.</p></div><a href="../">← Voltar ao site</a></div>
+<section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
+<section id="login" class="card hidden"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
+<form id="login-form"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
+<p><button id="login-btn" type="submit">Entrar no painel</button></p></form></section>
+<section id="panel" class="hidden">
+<section class="card"><div class="row"><h2>Adicionar foto</h2><button class="secondary" id="logout" type="button">Sair</button></div>
+<form id="upload-form"><label for="title">Título da imagem</label><input id="title" maxlength="120" required placeholder="Ex.: Novo expositor">
+<label for="file">Escolher foto (JPG, PNG ou WEBP, até 10 MB)</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp" required>
+<p><button id="upload-btn" type="submit">Adicionar foto ao site</button></p></form></section>
+<section class="card"><h2>Fotos adicionadas</h2><p class="muted">As 8 imagens originais continuam preservadas. Você pode excluir aqui as imagens adicionadas pelo painel.</p><div id="photos" class="grid"></div></section>
+</section><p id="status" class="status" role="status" aria-live="polite"></p>
+</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="../config.js"></script>
+<script>
+(async function(){
+const el=id=>document.getElementById(id),show=(id,on)=>el(id).classList.toggle("hidden",!on),say=msg=>el("status").textContent=msg;
+const c=window.FEIRA_CONFIG;
+if(!c?.supabaseUrl||!c?.supabaseAnonKey||!c?.adminEmail||!window.supabase){show("setup",true);return;}
+const db=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
+async function load(){
+const {data,error}=await db.from("feira_fotos").select("id,titulo,caminho").order("criado_em",{ascending:false}).limit(200);
+if(error){say("Erro ao carregar: "+error.message);return;}
+const grid=el("photos");grid.replaceChildren();
+if(!data.length){const p=document.createElement("p");p.textContent="Ainda não há fotos enviadas.";grid.append(p);}
+for(const f of data){
+const card=document.createElement("article");card.className="photo";
+const img=document.createElement("img");img.src=db.storage.from("feira-fotos").getPublicUrl(f.caminho).data.publicUrl;img.alt=f.titulo;img.loading="lazy";
+const info=document.createElement("div"),title=document.createElement("strong");title.textContent=f.titulo;
+const btn=document.createElement("button");btn.className="danger";btn.type="button";btn.textContent="Excluir foto";
+btn.onclick=async()=>{
+if(!confirm('Excluir "'+f.titulo+'"?'))return;
+btn.disabled=true;say("Excluindo...");
+const result=await db.from("feira_fotos").delete().eq("id",f.id).select("id");
+if(result.error||!result.data?.length){say("Não foi possível excluir: "+(result.error?.message||"sem permissão"));btn.disabled=false;return;}
+const cleanup=await db.storage.from("feira-fotos").remove([f.caminho]);
+say(cleanup.error?"Foto removida do site; arquivo pendente de limpeza.":"Foto excluída.");await load();
+};
+info.append(title,btn);card.append(img,info);grid.append(card);
+}}
+async function sync(){
+const {data:{user}}=await db.auth.getUser();
+let ok=false;if(user){const {data,error}=await db.rpc("e_admin_feira");ok=!error&&data===true;}
+show("login",!ok);show("panel",ok);
+if(ok){say("");await load();}
+else if(user){await db.auth.signOut();say("Acesso não autorizado.");}
+}
+el("login-form").onsubmit=async e=>{
+e.preventDefault();el("login-btn").disabled=true;say("Verificando senha...");
+const {error}=await db.auth.signInWithPassword({email:c.adminEmail,password:el("password").value});
+el("login-btn").disabled=false;el("password").value="";
+if(error){say("Senha incorreta ou conta não configurada.");return;}
+await sync();
+};
+el("logout").onclick=async()=>{await db.auth.signOut();say("Você saiu.");await sync();};
+el("upload-form").onsubmit=async e=>{
+e.preventDefault();const file=el("file").files[0],title=el("title").value.trim();
+const ext={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"}[file?.type];
+if(!ext){say("Selecione JPG, PNG ou WEBP.");return;}
+if(file.size>10485760){say("A foto deve ter até 10 MB.");return;}
+if(!title){say("Informe um título.");return;}
+const btn=el("upload-btn");btn.disabled=true;say("Enviando foto...");
+const path=crypto.randomUUID()+"."+ext;
+try{
+const sent=await db.storage.from("feira-fotos").upload(path,file,{contentType:file.type,upsert:false});
+if(sent.error)throw sent.error;
+const saved=await db.from("feira_fotos").insert({titulo:title,caminho:path});
+if(saved.error){await db.storage.from("feira-fotos").remove([path]);throw saved.error;}
+el("upload-form").reset();say("Foto publicada!");await load();
+}catch(err){say("Erro: "+err.message);}
+finally{btn.disabled=false;}
+};
+await sync();
+})();
+</script></body></html>

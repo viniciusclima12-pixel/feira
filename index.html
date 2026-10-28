@@ -1,94 +1,10 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#061d34">
-<title>Painel de fotos | Feira</title>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#061d34"><meta name="description" content="Confira serviços gratuitos, cursos, oportunidades e expositores confirmados da Feira da Educação, Emprego e Empreendedorismo."><title>Feira da Educação, Emprego e Empreendedorismo</title>
 <style>
-:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;--gold:#ffc52f}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#164568,#061d34 65%);color:#eef5ff}
-main{max-width:970px;margin:auto;padding:30px 18px 80px}h1{font-size:clamp(1.8rem,4vw,2.6rem);margin:12px 0}h2{font-size:1.15rem}
-a{color:var(--gold)}p{line-height:1.6}.muted{color:#b9c9dc}
-.card{border:1px solid #ffffff2b;background:#ffffff0b;border-radius:20px;padding:24px;margin:22px 0}
-label{display:block;font-weight:650;margin:16px 0 7px}input{display:block;width:100%;padding:13px;background:#04192b;border:1px solid #ffffff50;border-radius:10px;color:white;font:inherit}
-button{background:var(--gold);color:#071e34;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:750;cursor:pointer}
-button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:white;border:1px solid #ffffff35}
-.danger{background:#ffdddd;color:#741a1a}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.hidden{display:none!important}.status{min-height:26px;color:#ffe08a}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:18px}
-.photo{background:#04192b;border:1px solid #ffffff25;border-radius:14px;overflow:hidden}
-.photo img{width:100%;height:180px;object-fit:contain}.photo div{padding:12px}
-.photo strong{display:block;margin-bottom:12px;overflow-wrap:anywhere}
-</style></head><body><main>
-<div class="row"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Gerenciar fotos</h1><p class="muted">Adicione ou remova fotos sem editar o site.</p></div><a href="../">← Voltar ao site</a></div>
-<section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
-<section id="login" class="card hidden"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
-<form id="login-form"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
-<p><button id="login-btn" type="submit">Entrar no painel</button></p></form></section>
-<section id="panel" class="hidden">
-<section class="card"><div class="row"><h2>Adicionar foto</h2><button class="secondary" id="logout" type="button">Sair</button></div>
-<form id="upload-form"><label for="title">Título da imagem</label><input id="title" maxlength="120" required placeholder="Ex.: Novo expositor">
-<label for="file">Escolher foto (JPG, PNG ou WEBP, até 10 MB)</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp" required>
-<p><button id="upload-btn" type="submit">Adicionar foto ao site</button></p></form></section>
-<section class="card"><h2>Fotos adicionadas</h2><p class="muted">As 8 imagens originais continuam preservadas. Você pode excluir aqui as imagens adicionadas pelo painel.</p><div id="photos" class="grid"></div></section>
-</section><p id="status" class="status" role="status" aria-live="polite"></p>
-</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="../config.js"></script>
-<script>
-(async function(){
-const el=id=>document.getElementById(id),show=(id,on)=>el(id).classList.toggle("hidden",!on),say=msg=>el("status").textContent=msg;
-const c=window.FEIRA_CONFIG;
-if(!c?.supabaseUrl||!c?.supabaseAnonKey||!c?.adminEmail||!window.supabase){show("setup",true);return;}
-const db=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
-async function load(){
-const {data,error}=await db.from("feira_fotos").select("id,titulo,caminho").order("criado_em",{ascending:false}).limit(200);
-if(error){say("Erro ao carregar: "+error.message);return;}
-const grid=el("photos");grid.replaceChildren();
-if(!data.length){const p=document.createElement("p");p.textContent="Ainda não há fotos enviadas.";grid.append(p);}
-for(const f of data){
-const card=document.createElement("article");card.className="photo";
-const img=document.createElement("img");img.src=db.storage.from("feira-fotos").getPublicUrl(f.caminho).data.publicUrl;img.alt=f.titulo;img.loading="lazy";
-const info=document.createElement("div"),title=document.createElement("strong");title.textContent=f.titulo;
-const btn=document.createElement("button");btn.className="danger";btn.type="button";btn.textContent="Excluir foto";
-btn.onclick=async()=>{
-if(!confirm('Excluir "'+f.titulo+'"?'))return;
-btn.disabled=true;say("Excluindo...");
-const result=await db.from("feira_fotos").delete().eq("id",f.id).select("id");
-if(result.error||!result.data?.length){say("Não foi possível excluir: "+(result.error?.message||"sem permissão"));btn.disabled=false;return;}
-const cleanup=await db.storage.from("feira-fotos").remove([f.caminho]);
-say(cleanup.error?"Foto removida do site; arquivo pendente de limpeza.":"Foto excluída.");await load();
-};
-info.append(title,btn);card.append(img,info);grid.append(card);
-}}
-async function sync(){
-const {data:{user}}=await db.auth.getUser();
-let ok=false;if(user){const {data,error}=await db.rpc("e_admin_feira");ok=!error&&data===true;}
-show("login",!ok);show("panel",ok);
-if(ok){say("");await load();}
-else if(user){await db.auth.signOut();say("Acesso não autorizado.");}
-}
-el("login-form").onsubmit=async e=>{
-e.preventDefault();el("login-btn").disabled=true;say("Verificando senha...");
-const {error}=await db.auth.signInWithPassword({email:c.adminEmail,password:el("password").value});
-el("login-btn").disabled=false;el("password").value="";
-if(error){say("Senha incorreta ou conta não configurada.");return;}
-await sync();
-};
-el("logout").onclick=async()=>{await db.auth.signOut();say("Você saiu.");await sync();};
-el("upload-form").onsubmit=async e=>{
-e.preventDefault();const file=el("file").files[0],title=el("title").value.trim();
-const ext={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"}[file?.type];
-if(!ext){say("Selecione JPG, PNG ou WEBP.");return;}
-if(file.size>10485760){say("A foto deve ter até 10 MB.");return;}
-if(!title){say("Informe um título.");return;}
-const btn=el("upload-btn");btn.disabled=true;say("Enviando foto...");
-const path=crypto.randomUUID()+"."+ext;
-try{
-const sent=await db.storage.from("feira-fotos").upload(path,file,{contentType:file.type,upsert:false});
-if(sent.error)throw sent.error;
-const saved=await db.from("feira_fotos").insert({titulo:title,caminho:path});
-if(saved.error){await db.storage.from("feira-fotos").remove([path]);throw saved.error;}
-el("upload-form").reset();say("Foto publicada!");await load();
-}catch(err){say("Erro: "+err.message);}
-finally{btn.disabled=false;}
-};
-await sync();
-})();
-</script></body></html>
+:root{color-scheme:dark;--navy:#061d34;--gold:#ffc52f;--text:#eaf2ff;--muted:#aabed2}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--text);background:radial-gradient(ellipse at 50% -20%,#13416a 0,transparent 58%),var(--navy)}.wrap{max-width:1100px;margin:auto;padding:0 20px}header{text-align:center;padding:54px 0 30px}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.16em;font-size:.75rem;font-weight:800}h1{font-size:clamp(2rem,5vw,3.6rem);letter-spacing:-.045em;line-height:1.08;margin:14px auto;max-width:900px}h1 span{color:var(--gold)}.lead{color:var(--muted);max-width:600px;margin:0 auto 22px}.pills{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:25px 0}.pill{padding:9px 15px;border:1px solid #ffffff25;background:#ffffff0b;border-radius:100px;font-size:.92rem}.intro{text-align:center;margin:32px 0 24px}.intro h2{font-size:clamp(1.45rem,3vw,2rem);margin:0 0 7px}.intro p{margin:0;color:var(--muted)}.gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-bottom:48px}.tile{background:#ffffff0a;border:1px solid #ffffff1c;border-radius:17px;overflow:hidden;min-width:0;transition:transform .15s,border-color .15s}.tile:hover{transform:translateY(-3px);border-color:#ffc52f75}.tile button{appearance:none;border:0;background:transparent;color:inherit;padding:0;width:100%;cursor:zoom-in;text-align:left}.tile img{display:block;width:100%;height:330px;object-fit:contain;background:#04182b;padding:12px}.tile strong{display:block;padding:13px 15px 16px;font-size:.92rem;font-weight:650}.tile:first-child{grid-column:span 2}.tile:first-child img{height:430px}footer{text-align:center;color:var(--muted);border-top:1px solid #ffffff1a;padding:22px 0 40px;font-size:.83rem}.overlay{position:fixed;inset:0;z-index:10;background:#010914f2;display:none;align-items:center;justify-content:center;flex-direction:column;padding:60px 12px 24px}.overlay.open{display:flex}.overlay img{max-width:100%;max-height:calc(100dvh - 140px);object-fit:contain;border-radius:8px}.overlay p{margin:10px 0;color:#fff;text-align:center}.close{position:absolute;right:16px;top:12px;border:1px solid #ffffff60;background:#ffffff20;color:white;border-radius:50%;font-size:24px;width:42px;height:42px;cursor:pointer}.hint{font-size:.8rem;color:var(--muted)}@media(max-width:800px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile img{height:280px}.tile:first-child img{height:360px}}@media(max-width:520px){header{padding-top:38px}.gallery{grid-template-columns:1fr}.tile:first-child{grid-column:span 1}.tile img{height:auto;max-height:540px}.tile:first-child img{height:auto;max-height:540px}.tile img{padding:9px}.wrap{padding:0 14px}.pill{font-size:.85rem}.overlay img{max-height:calc(100dvh - 130px)}}
+</style></head><body><div class="wrap"><header><div class="eyebrow">Aberto ao público • Entrada gratuita</div><h1>Feira da <span>Educação, Emprego</span> e Empreendedorismo</h1><p class="lead">Conheça os serviços, cursos, atividades e expositores participantes. Tudo em um só lugar.</p><div class="pills"><span class="pill">📅 07/11/2026 • Sábado</span><span class="pill">🕑 14h às 19h</span><span class="pill">📍 Rua Odir Gomes da Rocha, 515 • Tatuquara</span></div></header><section aria-label="Cartazes da feira"><div class="intro"><h2>Informações e expositores</h2><p>Toque em qualquer cartaz para ampliar e ler os detalhes.</p></div><div class="gallery" id="gallery"></div></section><footer>Feira da Educação, Emprego e Empreendedorismo • Sem cadastro, anúncios ou contato obrigatório</footer></div><div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Visualização ampliada" tabindex="-1"><button class="close" id="close" aria-label="Fechar imagem">×</button><img id="large" alt=""><p id="label"></p><span class="hint">Toque fora da imagem ou pressione Esc para fechar</span></div><script>
+const items=[{"src": "cartaz-01.png", "title": "Serviços e atividades gratuitos"}, {"src": "cartaz-02.jpeg", "title": "Expositor: FamilySearch"}, {"src": "cartaz-03.jpeg", "title": "Expositor: Cosette Design"}, {"src": "cartaz-04.jpeg", "title": "Expositor: Condor"}, {"src": "cartaz-05.jpeg", "title": "Expositor: Ônibus Espaço Empreendedor"}, {"src": "cartaz-06.jpeg", "title": "Expositor: Assistência jurídica gratuita"}, {"src": "cartaz-07.jpeg", "title": "Expositor: Prefeitura de Curitiba"}, {"src": "cartaz-08.jpeg", "title": "Expositor: UNIFAEL"}];const gallery=document.getElementById('gallery');const overlay=document.getElementById('overlay');const large=document.getElementById('large');const label=document.getElementById('label');items.forEach((it,i)=>{const tile=document.createElement('article');tile.className='tile';const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ampliar '+it.title);const img=document.createElement('img');img.src=it.src;img.alt=it.title;img.loading=i<2?'eager':'lazy';img.decoding='async';const title=document.createElement('strong');title.textContent=it.title;b.append(img,title);tile.append(b);gallery.append(tile);b.addEventListener('click',()=>{large.src=it.src;large.alt=it.title;label.textContent=it.title;overlay.classList.add('open');document.body.style.overflow='hidden';document.getElementById('close').focus()})});function closeOverlay(){overlay.classList.remove('open');document.body.style.overflow='';large.removeAttribute('src')}document.getElementById('close').addEventListener('click',closeOverlay);overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
+</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="galeria-online.js" defer></script>
+</body></html>
