@@ -46,7 +46,7 @@
 .participar-assurances svg{height:18px;width:18px;stroke:#f5d08c;flex-shrink:0}
 @media(max-width:600px){.participar{padding:23px 17px;margin:20px 0 38px;border-radius:20px}.participar-top-icon{width:45px;height:45px;border-radius:13px}.participar-top-icon svg{width:23px;height:23px}.participar-top{align-items:start}.participar-top h2{font-size:clamp(2rem,8vw,2.7rem)}.participar-main{padding:16px}.participar-perfil{align-items:start}.participar .participar-trocar{width:100%}.participar .participar-google{width:100%}.participar-assurances{gap:10px}}
 @media(prefers-reduced-motion:reduce){.participar .participar-google{transition:none}.participar .participar-google:hover{transform:none}}
-</style></head><body><div class="wrap"><header><div class="eyebrow">Aberto ao público • Entrada gratuita</div><h1>Feira da <span>Educação, Emprego</span> e Empreendedorismo</h1><p class="lead">Conheça os serviços, cursos, atividades e expositores participantes. Tudo em um só lugar.</p><div class="pills"><span class="pill">📅 07/11/2026 • Sábado</span><span class="pill">🕑 14h às 19h</span><span class="pill">📍 Rua Odir Gomes da Rocha, 515 • Tatuquara</span></div></header><section id="participar" class="participar" aria-labelledby="participar-titulo">
+</style></head><body><div class="wrap"><header><div class="eyebrow">Aberto ao público • Entrada gratuita</div><h1>Feira da <span>Educação, Emprego</span> e Empreendedorismo</h1><p class="lead">Conheça os serviços, cursos, atividades e expositores participantes. Tudo em um só lugar.</p><div class="pills"><span class="pill">📅 07/11/2026 • Sábado</span><span class="pill">🕑 14h às 19h</span><span class="pill">📍 Rua Odir Gomes da Rocha, 515 • Tatuquara</span></div></header><section aria-label="Cartazes da feira"><div class="intro"><h2>Informações e expositores</h2><p>Toque em qualquer cartaz para ampliar e ler os detalhes.</p></div><div class="gallery" id="gallery"></div></section><section id="participar" class="participar" aria-labelledby="participar-titulo">
   <div class="participar-kicker"><span class="participar-spark" aria-hidden="true"></span> SUA PRESENÇA IMPORTA</div>
   <div class="participar-top">
     <div>
@@ -77,11 +77,11 @@
           <strong id="participar-usuario">Participante</strong>
           <span id="participar-email-conta"></span>
         </div>
-        <button type="button" id="participar-sair" class="participar-trocar">Trocar conta</button>
+        <button type="button" id="participar-sair" class="participar-trocar">Sair da conta</button>
       </div>
       <div class="participar-conta-acoes">
-        <button type="button" id="participar-novo" class="participar-novo">+ Confirmar outra participação</button>
-        <span>Se já confirmou, sua inscrição continua registrada.</span>
+        <button type="button" id="participar-novo" class="participar-novo">Registrar com outro e-mail</button>
+        <span>Uma inscrição por e-mail. Se quiser registrar outra pessoa, selecione outra conta Google.</span>
       </div>
       <div id="participar-historico" class="participar-historico" aria-live="polite"></div>
     </div>
@@ -92,7 +92,7 @@
     <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Identificação pelo Google</span>
     <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg> Dados para organização do evento</span>
   </div>
-</section><section aria-label="Cartazes da feira"><div class="intro"><h2>Informações e expositores</h2><p>Toque em qualquer cartaz para ampliar e ler os detalhes.</p></div><div class="gallery" id="gallery"></div></section><footer>Feira da Educação, Emprego e Empreendedorismo • Entrada gratuita • Respeito aos dados dos participantes</footer></div><div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Visualização ampliada" tabindex="-1"><button class="close" id="close" aria-label="Fechar imagem">×</button><img id="large" alt=""><p id="label"></p><span class="hint">Toque fora da imagem ou pressione Esc para fechar</span></div><script>
+</section><footer>Feira da Educação, Emprego e Empreendedorismo • Entrada gratuita • Respeito aos dados dos participantes</footer></div><div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Visualização ampliada" tabindex="-1"><button class="close" id="close" aria-label="Fechar imagem">×</button><img id="large" alt=""><p id="label"></p><span class="hint">Toque fora da imagem ou pressione Esc para fechar</span></div><script>
 const items=[];const gallery=document.getElementById('gallery');const overlay=document.getElementById('overlay');const large=document.getElementById('large');const label=document.getElementById('label');items.forEach((it,i)=>{const tile=document.createElement('article');tile.className='tile';const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ampliar '+it.title);const img=document.createElement('img');img.src=it.src;img.alt=it.title;img.loading=i<2?'eager':'lazy';img.decoding='async';const title=document.createElement('strong');title.textContent=it.title;b.append(img,title);tile.append(b);gallery.append(tile);b.addEventListener('click',()=>{large.src=it.src;large.alt=it.title;label.textContent=it.title;overlay.classList.add('open');document.body.style.overflow='hidden';document.getElementById('close').focus()})});function closeOverlay(){overlay.classList.remove('open');document.body.style.overflow='';large.removeAttribute('src')}document.getElementById('close').addEventListener('click',closeOverlay);overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
 </script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -123,6 +123,6 @@ const items=[];const gallery=document.getElementById('gallery');const overlay=do
  .then(({error})=>{if(error){console.warn("Estatísticas:",error.message);try{localStorage.removeItem(key)}catch(e){}}});
 })();
 </script>
-<script src="galeria-online.js" defer></script><script src="inscricoes.js?v=google2" defer></script>
+<script src="galeria-online.js" defer></script><script src="inscricoes.js?v=google3" defer></script>
 <script src="temas.js" defer></script>
 </body></html>
