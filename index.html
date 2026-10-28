@@ -206,14 +206,14 @@ const items=[];const gallery=document.getElementById('gallery');const overlay=do
       const navHeight=nav.getBoundingClientRect().height;
       const top=Math.max(0,item.element.getBoundingClientRect().top+window.scrollY-navHeight-14);
       history.replaceState(null,"",item.link.hash);
-      window.scrollTo({top,behavior:reduced()?"instant":"smooth"});
+      window.scrollTo({top,behavior:reduced()?"auto":"smooth"});
       schedule();
     });
   }
   nav.querySelector('.site-nav-brand')?.addEventListener("click",event=>{
     event.preventDefault();
     history.replaceState(null,"","#inicio");
-    window.scrollTo({top:0,behavior:reduced()?"instant":"smooth"});
+    window.scrollTo({top:0,behavior:reduced()?"auto":"smooth"});
     schedule();
   });
   window.addEventListener("scroll",schedule,{passive:true});
