@@ -93,7 +93,6 @@ let draft=null;try{draft=localStorage.getItem("feira_tema_rascunho")}catch(e){}
 if(!byId("tema-preview").getAttribute("src"))selected=Object.hasOwn(names,draft)?draft:published;
 preview();
 }
-db.auth.onAuthStateChange((_event,session)=>{if(!session)authorized=false;else setTimeout(load,0)});
+db.auth.onAuthStateChange((_event,session)=>{if(!session)authorized=false;else if(!byId("admin-temas").classList.contains("hidden"))setTimeout(load,0)});
 document.querySelector('[data-tab="temas"]').addEventListener("click",load);
-load();
 })();
