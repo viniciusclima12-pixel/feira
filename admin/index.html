@@ -54,13 +54,28 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 .admin-view{scroll-margin-top:18px}.photo-actions{display:flex;gap:6px;align-items:center;margin-top:10px}.photo-actions button{font-size:12px;padding:8px 10px}.photo-actions .move{background:#153c5c;color:#fff}.photo-actions .edit{background:#ffc52f}.photo .photo-image{padding:0}
 .admin-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.admin-toolbar input{max-width:310px}
 .admin-toast{color:#ffc52f;min-height:20px}.trash-row{display:flex;gap:12px;align-items:center;justify-content:space-between;border:1px solid #ffffff25;border-radius:12px;padding:12px;margin-top:10px;flex-wrap:wrap}
+</style><style>
+.tema-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:24px}
+.tema-choice{display:block;text-align:left;padding:12px;background:#0A2037;border:2px solid #ffffff28;color:white;border-radius:16px;cursor:pointer;min-width:0}
+.tema-choice[aria-pressed="true"]{border-color:#ffc52f;box-shadow:0 0 0 2px #ffc52f38}
+.tema-thumb{height:90px;padding:10px;border-radius:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.tema-thumb .mock-nav{display:flex;justify-content:space-between;gap:7px}
+.tema-thumb .mock-line{height:7px;width:60%;border-radius:100px;opacity:.8}
+.tema-thumb .mock-chips{display:flex;gap:5px;margin-top:auto}.tema-thumb .mock-chips span{height:24px;border-radius:5px;flex:1}
+.tema-choice strong{display:block;margin:12px 0 3px;font-size:.94rem}
+.tema-choice small{display:block;color:#b9c9dc;line-height:1.4}
+.tema-frame-wrap{background:#061524;border:1px solid #ffffff35;border-radius:16px;padding:12px;display:flex;justify-content:center;min-height:640px;overflow:auto}
+#tema-preview{width:100%;height:680px;border:0;background:white;border-radius:9px;transition:width .2s}
+.tema-frame-wrap.is-mobile #tema-preview{width:375px;max-width:100%;height:720px}
+@media(max-width:730px){.tema-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.tema-frame-wrap{min-height:530px}#tema-preview{height:590px}}
+@media(max-width:420px){.tema-cards{grid-template-columns:1fr 1fr}.tema-choice{padding:8px}.tema-thumb{height:75px}}
 </style></head><body><main>
 <div class="row"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Gerenciar fotos</h1><p class="muted">Adicione ou remova fotos sem editar o site.</p></div><a href="../">← Voltar ao site</a></div>
 <section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
 <section id="login" class="card hidden"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
 <form id="login-form"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
 <p><button id="login-btn" type="submit">Entrar no painel</button></p></form></section>
-<section id="panel" class="hidden"><nav class="admin-nav" aria-label="Seções do painel"><button type="button" class="active" data-tab="visao">Visão geral</button><button type="button" data-tab="fotos">Gerenciar fotos</button><button type="button" data-tab="lixeira">Lixeira</button></nav><div id="admin-visao" class="admin-view"><section id="feira-stats" class="hidden" aria-label="Estatísticas de acesso">
+<section id="panel" class="hidden"><nav class="admin-nav" aria-label="Seções do painel"><button type="button" class="active" data-tab="visao">Visão geral</button><button type="button" data-tab="fotos">Gerenciar fotos</button><button type="button" data-tab="lixeira">Lixeira</button><button type="button" data-tab="temas">🎨 Temas do site</button></nav><div id="admin-visao" class="admin-view"><section id="feira-stats" class="hidden" aria-label="Estatísticas de acesso">
 <div class="stats-heading"><div><div class="stats-eyebrow">PAINEL ADMINISTRATIVO</div><h2 style="margin:5px 0 0">Estatísticas de acesso</h2></div><span style="font-size:28px;color:#ffc52f" aria-hidden="true">◉</span></div>
 <div class="stats-grid">
 <div class="stats-item"><div class="stat-top"><span>Total de visitas</span><span class="stat-icon" aria-hidden="true">◉</span></div><div id="stat-total" class="stat-value">—</div></div>
@@ -77,6 +92,16 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 <button id="import-old" type="button">Importar as 8 imagens antigas</button>
 <p class="muted" id="import-progress" role="status" aria-live="polite"></p></section>
 <section class="card"><h2>Cartazes publicados</h2><p class="muted">Edite os nomes e use as setas para mudar a ordem. O primeiro cartaz fica fixado no topo até você alterar a ordem.</p><div class="admin-toolbar"><input id="photo-search" placeholder="Buscar cartaz pelo nome..." aria-label="Buscar cartaz"><span id="photo-count" class="muted"></span></div><div id="photos" class="grid"></div></section></div><div id="admin-lixeira" class="admin-view hidden"><section class="card"><h2>Lixeira de cartazes</h2><p class="muted">Restaure fotos removidas. Os arquivos são preservados no armazenamento.</p><div id="trash-items"></div></section></div>
+<div id="admin-temas" class="admin-view hidden">
+<section class="card">
+<div class="row"><div><div style="color:#ffc52f;font-size:12px;letter-spacing:.14em;font-weight:800">STUDIO DE DESIGN</div><h2 style="font-size:1.6rem;margin:6px 0">Temas automáticos</h2><p class="muted" style="margin:0">Escolha um dos seis visuais prontos. A prévia não altera o site público.</p></div><span id="tema-publicado" class="muted">Carregando tema...</span></div>
+<div id="tema-cards" class="tema-cards"></div>
+<div class="row" style="margin:24px 0 10px"><div><h2 style="margin:0">Prévia real do site</h2><p class="muted" style="margin:5px 0">Com os cartazes atuais e o tema selecionado</p></div><div class="row"><button type="button" class="secondary" data-viewport="desktop">💻 PC</button><button type="button" class="secondary" data-viewport="mobile">📱 Celular</button></div></div>
+<div class="tema-frame-wrap" id="tema-frame-wrap"><iframe id="tema-preview" title="Prévia do site da feira" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+<div class="row" style="margin-top:18px"><a id="tema-preview-link" href="../" target="_blank" rel="noopener noreferrer">Abrir prévia em nova aba ↗</a><div class="row"><button type="button" class="secondary" id="tema-restore">Restaurar seleção publicada</button><button type="button" class="secondary" id="tema-original">Escolher original</button><button type="button" id="tema-publish">Publicar tema escolhido</button></div></div>
+<p class="muted" style="margin-top:14px">Só o botão <strong>Publicar tema escolhido</strong> muda a aparência dos visitantes. O tema original fica disponível para restauração.</p>
+<p id="tema-message" class="status" role="status" aria-live="polite"></p>
+</section></div>
 </section><p id="status" class="status" role="status" aria-live="polite"></p>
 </main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="../config.js"></script>
 <script>
@@ -159,7 +184,7 @@ imageArea.append(img,btn);info.append(title,actions);card.append(imageArea,info)
 async function movePhoto(id,delta){const all=window.feiraFotos||[];const i=all.findIndex(x=>x.id===id),j=i+delta;if(j<0||j>=all.length)return;[all[i],all[j]]=[all[j],all[i]];const changes=await Promise.all(all.map((f,index)=>db.from("feira_fotos").update({posicao:index+1}).eq("id",f.id)));const failed=changes.find(x=>x.error);if(failed){say("Erro ao ordenar: "+failed.error.message);await load();return;}say("Ordem atualizada.");renderPhotos();}
 async function loadTrash(){const {data,error}=await db.from("feira_lixeira").select("*").order("excluido_em",{ascending:false}).limit(100);const target=el("trash-items");target.replaceChildren();if(error){target.textContent="Erro: "+error.message;return;}if(!data.length){target.textContent="A lixeira está vazia.";return;}for(const f of data){const row=document.createElement("div");row.className="trash-row";const title=document.createElement("strong");title.textContent=f.titulo;const restore=document.createElement("button");restore.type="button";restore.textContent="Restaurar";restore.onclick=async()=>{restore.disabled=true;const added=await db.from("feira_fotos").insert({titulo:f.titulo,caminho:f.caminho,posicao:f.posicao});if(added.error){say("Erro ao restaurar: "+added.error.message);restore.disabled=false;return;}await db.from("feira_lixeira").delete().eq("id",f.id);say("Cartaz restaurado.");await loadTrash();await load();};row.append(title,restore);target.append(row);}}
 el("photo-search").addEventListener("input",renderPhotos);
-document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===button));for(const name of ["visao","fotos","lixeira"])el("admin-"+name).classList.toggle("hidden",name!==tab);if(tab==="lixeira")loadTrash();}));
+document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===button));for(const name of ["visao","fotos","lixeira","temas"])el("admin-"+name).classList.toggle("hidden",name!==tab);if(tab==="lixeira")loadTrash();}));
 async function sync(){
 const {data:{user}}=await db.auth.getUser();
 let ok=false;if(user){const {data,error}=await db.rpc("e_admin_feira");ok=!error&&data===true;}
@@ -253,4 +278,4 @@ await sync();
  db.auth.onAuthStateChange(()=>{setTimeout(refresh,0)});
  await refresh();
 })();
-</script></body></html>
+</script><script src="temas-admin.js" defer></script></body></html>
