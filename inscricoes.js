@@ -156,11 +156,11 @@
     if (validGoogle(session)) {
       const changed = lastHistoryUser !== session.user.id;
       showSession(session);
-      if (changed) {
-        lastHistoryUser = session.user.id;
-        loadHistory();
-      }
+      lastHistoryUser = session.user.id;
+      // Primeiro conclui a inscrição iniciada pelo usuário. Consultar o
+      // histórico em paralelo pode mostrar a contagem antiga após o INSERT.
       if (isPending()) await register(session);
+      else if (changed) await loadHistory();
     } else {
       lastHistoryUser = null;
       showSession(null);
