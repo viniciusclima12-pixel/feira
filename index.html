@@ -18,11 +18,19 @@ const items=[];const gallery=document.getElementById('gallery');const overlay=do
  }catch(e){}
  const c=window.FEIRA_CONFIG;
  if(!c?.supabaseUrl||!c?.supabaseAnonKey||!window.supabase)return;
+ // Uma única contagem por navegador a cada 24 horas, evitando loops e recargas.
+ const key="feira_ultima_visita_24h";
  let visitor;
- try{visitor=localStorage.getItem("feira_visitor_id");if(!visitor){visitor=crypto.randomUUID();localStorage.setItem("feira_visitor_id",visitor);}}
- catch(e){visitor=crypto.randomUUID();}
+ try{
+   const previous=Number(localStorage.getItem(key)||0);
+   if(previous && Date.now()-previous<86400000)return;
+   visitor=localStorage.getItem("feira_visitor_id");
+   if(!visitor){visitor=crypto.randomUUID();localStorage.setItem("feira_visitor_id",visitor);}
+   // Grava antes da requisição para impedir várias chamadas simultâneas.
+   localStorage.setItem(key,String(Date.now()));
+ }catch(e){return;}
  window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey).from("feira_visitas").insert({visitante_id:visitor})
- .then(({error})=>{if(error)console.warn("Estatísticas:",error.message)});
+ .then(({error})=>{if(error){console.warn("Estatísticas:",error.message);try{localStorage.removeItem(key)}catch(e){}}});
 })();
 </script>
 <script src="galeria-online.js" defer></script>
