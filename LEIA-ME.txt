@@ -1,18 +1,23 @@
-ATUALIZAÇÃO DO SITE DA FEIRA - PAINEL ADMINISTRATIVO
+ATUALIZAÇÃO DA FEIRA — IMPORTAÇÃO DAS 8 IMAGENS ANTIGAS
 
-1. Não altere as oito imagens cartaz-01.png e cartaz-02.jpeg até cartaz-08.jpeg que já estão no GitHub.
-2. No repositório viniciusclima12-pixel/feira, envie estes arquivos mantendo os caminhos:
-   index.html (substituir o atual)
-   config.js (novo)
-   galeria-online.js (novo)
-   admin/index.html (novo, dentro da pasta admin)
-3. O GitHub Pages publicará os arquivos depois do commit.
-4. Site: https://viniciusclima12-pixel.github.io/feira/
-5. Painel: https://viniciusclima12-pixel.github.io/feira/admin/
-6. A senha do painel é a senha da conta criada em Authentication > Users no Supabase.
-7. As fotos originais continuam no GitHub. O painel exclui apenas as fotos que ele próprio adicionar.
-8. Se a página informar erro de login, verifique se a conta está confirmada no Supabase.
-9. Se informar acesso não autorizado, verifique se o SQL inseriu o usuário em public.feira_admins.
-10. NÃO coloque a senha da conta ou chaves secretas em nenhum arquivo do site.
+O ZIP contém arquivos para duas etapas. NÃO publique index.html da ETAPA 2 antes de importar as fotos.
 
-ATENÇÃO: A conexão GitHub do ChatGPT não tinha permissão de escrita; os arquivos precisam ser enviados manualmente.
+1. No Supabase, abra SQL Editor e execute corrigir-permissoes.sql.
+2. No GitHub, substitua SOMENTE admin/index.html pelo arquivo admin/index.html deste pacote.
+3. Abra https://viniciusclima12-pixel.github.io/feira/admin/ e entre no painel.
+4. Clique em "Importar as 8 imagens antigas". Aguarde a mensagem "Importação concluída: 8 de 8 fotos".
+   Se houver erro, não prossiga: corrija e tente novamente. A importação é retomável.
+5. APENAS DEPOIS da confirmação, substitua no GitHub os arquivos da raiz:
+   - index.html
+   - galeria-online.js
+   O config.js incluído é opcional, pois o repositório já tem a configuração correta.
+6. Atualize o site (Ctrl+Shift+R) e confirme que as 8 fotos aparecem uma única vez.
+7. Volte ao painel. As 8 fotos agora têm lixeira no centro e podem ser excluídas.
+
+IMPORTANTE:
+- Não apague os arquivos cartaz-01.png até cartaz-08.jpeg antes de concluir e verificar.
+- Não é necessário apagar os arquivos antigos do GitHub após a migração; eles deixam de ser usados pelo site.
+- As fotos ficam no Supabase; mantenha backup dos originais.
+- Se aparecer erro ao enviar para o Storage, pode ser necessário ajustar as políticas de Storage do bucket feira-fotos.
+- Se as fotos já existirem na tabela com outros caminhos, a importação pode duplicá-las; verifique antes.
+- A alteração não foi aplicada diretamente no GitHub nem no Supabase.

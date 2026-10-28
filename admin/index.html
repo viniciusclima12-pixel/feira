@@ -18,7 +18,7 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 .photo img{width:100%;height:180px;object-fit:contain}.photo div{padding:12px}
 /* A lixeira fica sobre a foto, centralizada, sem ocupar espaço no rodapé. */
 .photo{position:relative}
-.photo .photo-image{height:180px;position:relative;overflow:hidden}
+.photo .photo-image{height:180px;position:relative;overflow:hidden;padding:0}
 .photo .photo-image img{display:block;width:100%;height:100%;object-fit:contain}
 .photo .photo-image::after{
   content:"";position:absolute;inset:0;background:rgba(2,13,25,.58);
@@ -49,6 +49,10 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 <form id="upload-form"><label for="title">Nome do expositor (opcional)</label><input id="title" maxlength="120" placeholder="Identificado automaticamente pela imagem"><p class="title-hint" id="title-hint">Ao selecionar uma foto, tentaremos identificar o nome do expositor. Você pode corrigir a sugestão.</p>
 <label for="file">Escolher foto (JPG, PNG ou WEBP, até 10 MB)</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp" required>
 <p><button id="upload-btn" type="submit">Adicionar foto ao site</button></p></form></section>
+<section class="card" id="import-section"><h2>Importar as 8 imagens antigas</h2>
+<p class="muted">Clique uma única vez para copiar os cartazes antigos do GitHub para o Supabase. Os arquivos originais não serão apagados.</p>
+<button id="import-old" type="button">Importar as 8 imagens antigas</button>
+<p class="muted" id="import-progress" role="status" aria-live="polite"></p></section>
 <section class="card"><h2>Fotos adicionadas</h2><p class="muted">As 8 imagens originais continuam preservadas. Você pode excluir aqui as imagens adicionadas pelo painel.</p><div id="photos" class="grid"></div></section>
 </section><p id="status" class="status" role="status" aria-live="polite"></p>
 </main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="../config.js"></script>
@@ -157,6 +161,38 @@ el("upload-form").reset();el("title-hint").textContent="Ao selecionar uma foto, 
 say("Foto publicada!");await load();
 }catch(err){say("Erro: "+err.message);}
 finally{btn.disabled=false;}
+};
+const oldPhotos=[["cartaz-01.png", "Serviços e atividades gratuitos"], ["cartaz-02.jpeg", "Expositor: FamilySearch"], ["cartaz-03.jpeg", "Expositor: Cosette Design"], ["cartaz-04.jpeg", "Expositor: Condor"], ["cartaz-05.jpeg", "Expositor: Ônibus Espaço Empreendedor"], ["cartaz-06.jpeg", "Expositor: Assistência jurídica gratuita"], ["cartaz-07.jpeg", "Expositor: Prefeitura de Curitiba"], ["cartaz-08.jpeg", "Expositor: UNIFAEL"]];
+el("import-old").onclick=async()=>{
+  const btn=el("import-old"), progress=el("import-progress");
+  if(!confirm("Importar as 8 imagens antigas para o Supabase? Os arquivos do GitHub serão preservados."))return;
+  btn.disabled=true;
+  let completed=0;
+  try{
+    for(const [filename,title] of oldPhotos){
+      progress.textContent=`Importando ${completed+1} de ${oldPhotos.length}: ${filename}`;
+      const path="originais/"+filename;
+      const existing=await db.from("feira_fotos").select("id").eq("caminho",path).limit(1);
+      if(existing.error)throw new Error("Não foi possível verificar "+filename+": "+existing.error.message);
+      if(existing.data.length){completed++;continue;}
+      const response=await fetch("../"+filename,{cache:"no-store"});
+      if(!response.ok)throw new Error("Não foi possível baixar "+filename+" do site (HTTP "+response.status+")");
+      const blob=await response.blob();
+      if(blob.size>10485760)throw new Error(filename+" ultrapassa 10 MB");
+      const uploaded=await db.storage.from("feira-fotos").upload(path,blob,{contentType:blob.type|| (filename.endsWith(".png")?"image/png":"image/jpeg"),upsert:false});
+      if(uploaded.error && !/already exists|duplicate|resource already exists/i.test(uploaded.error.message))
+        throw new Error("Erro ao enviar "+filename+": "+uploaded.error.message);
+      const saved=await db.from("feira_fotos").insert({titulo:title,caminho:path});
+      if(saved.error)throw new Error("Erro ao registrar "+filename+": "+saved.error.message);
+      completed++;
+    }
+    progress.textContent="Importação concluída: 8 de 8 fotos. Agora publique os arquivos da ETAPA 2 no GitHub para ativar a exclusão de todas.";
+    say("As 8 fotos foram importadas. Não apague os arquivos originais ainda.");
+    await load();
+  }catch(err){
+    progress.textContent="Importadas/verificadas "+completed+" de 8. "+err.message+" Corrija o problema e clique novamente para continuar.";
+    say("A importação não terminou. As fotos antigas continuam preservadas no GitHub.");
+  }finally{btn.disabled=false;}
 };
 await sync();
 })();
