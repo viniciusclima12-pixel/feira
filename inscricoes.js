@@ -1,4 +1,4 @@
-/* Participação na feira: conta Google verificada e múltiplas inscrições voluntárias. */
+/* Participação na feira: uma inscrição por conta Google/e-mail validado. */
 (function () {
   "use strict";
   const root = document.getElementById("participar");
@@ -89,7 +89,7 @@
         .select("id,criado_em,status")
         .eq("usuario_id", userId)
         .order("criado_em", { ascending: false })
-        .limit(30);
+        .limit(1);
       if (error) throw error;
       if (currentSession?.user?.id !== userId) return;
       const entries = data || [];
@@ -98,10 +98,9 @@
         return;
       }
       const label = document.createElement("strong");
-      label.textContent = entries.length === 1 ? "1 participação registrada" :
-        entries.length + (entries.length === 30 ? "+ participações recentes" : " participações registradas");
+      label.textContent = "✓ Sua participação está confirmada";
       const details = document.createElement("span");
-      details.textContent = " Última: " + new Date(entries[0].criado_em).toLocaleString("pt-BR", {
+      details.textContent = " • Registrada em " + new Date(entries[0].criado_em).toLocaleString("pt-BR", {
         dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo"
       });
       history.replaceChildren(label, details);
@@ -124,9 +123,22 @@
     add.disabled = true;
     connect.disabled = true;
     showSession(session);
-    say("Registrando sua participação...", "info");
+    say("Verificando sua inscrição...", "info");
     try {
       const user = session.user;
+      // Verificação amigável: o banco também possui índices únicos
+      // que impedem duas inscrições da mesma conta ou e-mail.
+      const previous = await client.from("feira_inscricoes")
+        .select("id")
+        .eq("usuario_id", user.id)
+        .limit(1);
+      if (previous.error) throw previous.error;
+      if (previous.data?.length) {
+        clearPending();
+        say("✓ Essa conta Google já confirmou a participação na feira. Não é necessário se cadastrar novamente.", "success");
+        await loadHistory();
+        return;
+      }
       const { data, error } = await client.from("feira_inscricoes")
         .insert({ usuario_id: user.id, nome: getName(user), email: user.email })
         .select("id")
@@ -134,13 +146,16 @@
       if (error) throw error;
       if (!data?.id) throw new Error("O banco não confirmou a inscrição.");
       clearPending();
-      say("✓ Participação confirmada! Sua inscrição foi salva com a conta Google conectada.", "success");
+      say("✓ Participação confirmada! Seu e-mail está inscrito na feira.", "success");
       await loadHistory();
     } catch (error) {
       // Não apague a intenção automaticamente: o visitante pode tentar de novo.
       clearPending();
       const msg = String(error?.message || "Erro de conexão.");
-      if (/row.level.security|permission.denied|42501/i.test(msg)) {
+      if (error?.code === "23505" || /duplicate.key|unique.constraint/i.test(msg)) {
+        say("✓ Este e-mail já tem uma inscrição. Para registrar outra pessoa, escolha outra conta Google.", "success");
+        await loadHistory();
+      } else if (/row.level.security|permission.denied|42501/i.test(msg)) {
         say("O servidor recusou a inscrição. Tente novamente; se continuar, avise a organização.", "error");
       } else {
         say("Não foi possível salvar sua participação: " + msg.slice(0, 180), "error");
@@ -195,14 +210,36 @@
 
   add.addEventListener("click", async () => {
     if (processing) return;
-    const { data: { session }, error } = await client.auth.getSession();
-    if (error || !validGoogle(session)) {
+    processing = true;
+    add.disabled = true;
+    logout.disabled = true;
+    clearPending();
+    say("Preparando o login de outro e-mail...", "info");
+    try {
+      const { error: logoutError } = await client.auth.signOut({ scope: "local" });
+      if (logoutError) throw logoutError;
+      lastHistoryUser = null;
       showSession(null);
-      say("Sua sessão expirou. Entre com Google novamente.", "error");
-      return;
+      history.textContent = "";
+      // A nova participação só é criada após a pessoa escolher outra conta.
+      sessionStorage.setItem(pendingKey, "sim");
+      const { error } = await client.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirect,
+          scopes: "openid email profile",
+          queryParams: { prompt: "select_account" }
+        }
+      });
+      if (error) throw error;
+    } catch (error) {
+      clearPending();
+      say("Não foi possível trocar a conta: " + String(error?.message || "Tente novamente."), "error");
+    } finally {
+      processing = false;
+      add.disabled = false;
+      logout.disabled = false;
     }
-    // Nova inscrição explícita; não precisa refazer o login.
-    await register(session);
   });
 
   logout.addEventListener("click", async () => {
@@ -215,7 +252,7 @@
       lastHistoryUser = null;
       showSession(null);
       history.textContent = "";
-      say("Você saiu. Sua inscrição anterior continua salva.", "info");
+      say("Você saiu da conta Google. A participação já confirmada continua salva.", "info");
     } catch (error) {
       say("Não foi possível sair da conta: " + String(error?.message || ""), "error");
     } finally {
