@@ -23,10 +23,35 @@ function apply(name){
  ".tile img{background:"+t[5]+"}.tile strong{font-family:system-ui,sans-serif;color:"+t[2]+"}"+
  "footer{color:"+t[3]+";border-color:"+t[1]+"38}"+
  "@media(prefers-reduced-motion:reduce){.tile{transition:none}.tile:hover{transform:none}}";
+ // O tema também estiliza navegação, divisórias e inscrições (incluindo temas claros).
+ const light=name==="cloud"||name==="studio";
+ const navBg=light?(name==="cloud"?"#FFFFFFF2":"#FFFCF7F2"):t[0]+"F2";
+ const panelBg=light
+   ?"radial-gradient(ellipse at 90% 0%,"+t[1]+"18,transparent 52%),linear-gradient(140deg,"+t[4]+","+t[5]+")"
+   :"radial-gradient(ellipse at 90% 0%,"+t[4]+",transparent 55%),linear-gradient(140deg,"+t[0]+","+t[4]+")";
+ const panelInner=light?(name==="cloud"?"#FFFFFFDB":"#FFFCF7D9"):t[5]+"C9";
+ const accent=t[1],uiText=t[2],uiMuted=t[3];
+ const buttonBg="linear-gradient(115deg,"+accent+","+accent+"E8)";
+ style.textContent+=
+ ":root{--feira-accent:"+accent+";--feira-accent-border:"+accent+"88;--feira-accent-soft:"+accent+"19;"+
+ "--feira-nav-bg:"+navBg+";--feira-nav-text:"+uiText+";--feira-ui-text:"+uiText+";"+
+ "--feira-ui-muted:"+uiMuted+";--feira-ui-border:"+accent+"88;"+
+ "--feira-panel-bg:"+panelBg+";--feira-panel-inner:"+panelInner+";"+
+ "--feira-panel-outline:"+accent+"45;--feira-subtle:"+accent+"12;"+
+ "--feira-button-bg:"+buttonBg+";--feira-button-text:"+(light?"#FFFFFF":"#14243A")+";"+
+ "--feira-ui-shadow:"+(light?"#152D481C":"#0000004D")+";"+
+ "--feira-success:"+(light?"#146439":"#C8FFDF")+";"+
+ "--feira-success-bg:"+(light?"#1E9D4714":"#22603F55")+";"+
+ "--feira-error:"+(light?"#A33120":"#FFE4C9")+";"+
+ "--feira-error-bg:"+(light?"#D9532416":"#732F1E42")+"}"+
+ ".participar-perfil-info small{color:var(--feira-success)}"+
+ ".participar-status[data-type=success]{border-color:"+(light?"#29844F55":"#5DDC9470")+"}"+
+ ".participar-status[data-type=error]{border-color:"+(light?"#B94D4D55":"#F0A07770")+"}"+
+ ".participar-google:hover{box-shadow:0 9px 28px "+(light?"#172F4725":"#0005")+"}";
  if(name==="cloud")style.textContent+="header,.intro{text-align:left}.lead{margin-left:0}.pills{justify-content:flex-start}.tile{box-shadow:0 8px 30px #10275312}";
  if(name==="aurora")style.textContent+=".pill{backdrop-filter:blur(12px)}.tile:nth-child(3n+2){border-top:4px solid #C4A7FF}";
  if(name==="emerald")style.textContent+=".eyebrow{letter-spacing:.23em}.intro h2{font-family:Georgia,serif}";
- if(name==="studio")style.textContent+="header{text-align:left;border-bottom:2px solid #252323;padding-bottom:35px}.lead{margin-left:0}.pills{justify-content:flex-start}.intro{text-align:left}.gallery{gap:13px}.tile strong{font-weight:800}";
+ if(name==="studio")style.textContent+="header{text-align:left;padding-bottom:35px}.lead{margin-left:0}.pills{justify-content:flex-start}.intro{text-align:left}.gallery{gap:13px}.tile strong{font-weight:800}";
  if(name==="skyline")style.textContent+=".tile:nth-child(4n+2){border-top:3px solid #74D9FF}.gallery{gap:17px}";
  document.head.append(style);
 }
