@@ -20,7 +20,8 @@ function preview(){
 const url="../?previewTema="+encodeURIComponent(selected);
 // Evita recarregar o iframe quando a autenticação ou a aba atualiza.
 const frame=byId("tema-preview");
-if(frame.getAttribute("src")!==url)frame.setAttribute("src",url);
+if(!frame.getAttribute("src"))frame.setAttribute("src",url);
+else if(frame.contentWindow)frame.contentWindow.postMessage({type:"feira:preview-tema",tema:selected},location.origin);
 byId("tema-preview-link").href=url;
 for(const [key,btn] of buttons)btn.setAttribute("aria-pressed",String(key===selected));
 byId("tema-publish").disabled=selected===published;
