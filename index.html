@@ -6,5 +6,16 @@
 const items=[];const gallery=document.getElementById('gallery');const overlay=document.getElementById('overlay');const large=document.getElementById('large');const label=document.getElementById('label');items.forEach((it,i)=>{const tile=document.createElement('article');tile.className='tile';const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ampliar '+it.title);const img=document.createElement('img');img.src=it.src;img.alt=it.title;img.loading=i<2?'eager':'lazy';img.decoding='async';const title=document.createElement('strong');title.textContent=it.title;b.append(img,title);tile.append(b);gallery.append(tile);b.addEventListener('click',()=>{large.src=it.src;large.alt=it.title;label.textContent=it.title;overlay.classList.add('open');document.body.style.overflow='hidden';document.getElementById('close').focus()})});function closeOverlay(){overlay.classList.remove('open');document.body.style.overflow='';large.removeAttribute('src')}document.getElementById('close').addEventListener('click',closeOverlay);overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
 </script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
+<script>
+(function(){
+ const c=window.FEIRA_CONFIG;
+ if(!c?.supabaseUrl||!c?.supabaseAnonKey||!window.supabase)return;
+ let visitor;
+ try{visitor=localStorage.getItem("feira_visitor_id");if(!visitor){visitor=crypto.randomUUID();localStorage.setItem("feira_visitor_id",visitor);}}
+ catch(e){visitor=crypto.randomUUID();}
+ window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey).from("feira_visitas").insert({visitante_id:visitor})
+ .then(({error})=>{if(error)console.warn("Estatísticas:",error.message)});
+})();
+</script>
 <script src="galeria-online.js" defer></script>
 </body></html>
