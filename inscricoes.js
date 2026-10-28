@@ -1,57 +1,59 @@
 (function(){
 const c=window.FEIRA_CONFIG;
-const form=document.getElementById("participar-form"),msg=document.getElementById("participar-msg");
-if(!form||!window.supabase||!c?.supabaseUrl){return}
-const client=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{storageKey:"feira_inscricoes_auth",detectSessionInUrl:true,autoRefreshToken:false}});
-const say=t=>msg.textContent=t;
-const resend=document.createElement("button");resend.type="button";resend.textContent="Não recebi o e-mail — reenviar";resend.style.cssText="display:none;margin:8px 0 0;background:transparent;color:#ffe08a;border:1px solid #ffe08a;padding:10px 15px";msg.insertAdjacentElement("afterend",resend);
-resend.onclick=()=>{if(!requesting)form.requestSubmit()};
-const key="feira_inscricao_pendente";
-let finishing=false;
-let requesting=false;
-
-async function finish(){
-if(finishing)return;
-let pending;
-try{pending=JSON.parse(localStorage.getItem(key)||"null")}catch(e){return}
-if(!pending?.nome||!pending?.email)return;
-const {data:{session}}=await client.auth.getSession();
-if(!session?.user)return;
-if(session.user.email?.toLowerCase()!==pending.email.toLowerCase()){say("O e-mail confirmado é diferente do informado. Use o mesmo e-mail.");return}
-finishing=true;
-say("Finalizando sua inscrição...");
-try{
- const {error}=await client.from("feira_inscricoes").insert({usuario_id:session.user.id,nome:pending.nome,email:pending.email});
- if(error)throw error;
- localStorage.removeItem(key);
- say("Inscrição confirmada! Seu e-mail foi verificado e o registro foi salvo.");
- resend.style.display="none";
- form.reset();
-}catch(err){say("Não foi possível concluir: "+err.message)}
-finally{finishing=false}
+const form=document.getElementById("participar-form"), msg=document.getElementById("participar-msg");
+if(!form||!window.supabase||!c?.supabaseUrl||!c?.supabaseAnonKey)return;
+const client=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{
+ auth:{storageKey:"feira_google_participacao",detectSessionInUrl:true,autoRefreshToken:true}
+});
+const key="feira_google_inscricao_pendente";
+const button=form.querySelector('button[type="submit"]');
+const say=(t)=>{msg.textContent=t};
+let submitting=false;
+async function registrar(){
+ if(submitting)return;
+ let pending=false;
+ try{pending=sessionStorage.getItem(key)==="sim"}catch(e){}
+ if(!pending)return;
+ submitting=true;button.disabled=true;say("Verificando sua conta Google e registrando a participação...");
+ try{
+  const {data:{session},error:sessionError}=await client.auth.getSession();
+  if(sessionError)throw sessionError;
+  if(!session?.user?.email){say("Faça login com uma conta Google que tenha e-mail.");return}
+  // Confirma que o usuário da sessão veio realmente do provedor Google.
+  if(!session.user.app_metadata?.providers?.includes("google") && session.user.app_metadata?.provider!=="google"){
+   say("Para participar, use o botão Continuar com Google.");return;
+  }
+  const name=(session.user.user_metadata?.full_name||session.user.user_metadata?.name||session.user.email.split("@")[0]||"Participante").trim().slice(0,100);
+  const {error}=await client.from("feira_inscricoes").insert({
+   usuario_id:session.user.id,nome:name.length>=3?name:"Participante",email:session.user.email
+  });
+  if(error)throw error;
+  try{sessionStorage.removeItem(key)}catch(e){}
+  say("✓ Participação confirmada! "+name+", sua inscrição foi registrada. Você pode conferir sua presença na feira.");
+ }catch(err){
+  say("Não foi possível registrar: "+(err.message||"erro de conexão")+". Clique em Continuar com Google para tentar novamente.");
+ }finally{submitting=false;button.disabled=false}
 }
 form.addEventListener("submit",async e=>{
-e.preventDefault();
-const nome=document.getElementById("participar-nome").value.trim(),email=document.getElementById("participar-email").value.trim().toLowerCase();
-if(nome.length<3||!form.reportValidity())return;
-const btn=form.querySelector('button[type="submit"]');
-if(requesting)return;
-requesting=true;btn.disabled=true;say("Preparando confirmação por e-mail...");
-try{
- localStorage.setItem(key,JSON.stringify({nome,email}));
- const {data:{session}}=await client.auth.getSession();
- if(session?.user?.email?.toLowerCase()===email){await finish();return}
- const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname+"#participar",shouldCreateUser:true}});
- if(error)throw error;
- say("Solicitação enviada para "+email+". Confira a caixa de entrada, spam e a aba Promoções. Se não chegar, confira o endereço e use o botão Reenviar e-mail.");
- resend.style.display="inline-block";
-}catch(err){
- const limited=err?.status===429||/rate limit|too many|limite|exceeded|email rate/i.test(err?.message||"");
- if(limited)say("O provedor de e-mail limitou temporariamente os envios. Isso não é um bloqueio do seu cadastro. Aguarde um pouco e tente reenviar; se continuar, a organização precisa configurar o serviço de e-mails.");
- else say("Erro ao enviar confirmação: "+err.message);
-}
-finally{btn.disabled=false;requesting=false}
+ e.preventDefault();
+ if(submitting)return;
+ submitting=true;button.disabled=true;say("Conectando com o Google...");
+ try{
+  sessionStorage.setItem(key,"sim");
+  const {data:{session}}=await client.auth.getSession();
+  if(session?.user?.email && (session.user.app_metadata?.providers?.includes("google")||session.user.app_metadata?.provider==="google")){
+   submitting=false;await registrar();return;
+  }
+  const {error}=await client.auth.signInWithOAuth({
+   provider:"google",options:{redirectTo:location.origin+location.pathname+"#participar"}
+  });
+  if(error)throw error;
+ }catch(err){
+  submitting=false;button.disabled=false;say("Não foi possível abrir o Google: "+(err.message||"erro desconhecido"));
+ }
 });
-client.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_IN"&&session)setTimeout(finish,0)});
-finish();
+client.auth.onAuthStateChange((event,session)=>{
+ if(event==="SIGNED_IN"&&session) setTimeout(registrar,0);
+});
+registrar();
 })();
