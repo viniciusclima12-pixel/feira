@@ -16,7 +16,8 @@
   const pendingKey = "feira_google_inscricao_pendente_v2";
   const oldPendingKey = "feira_google_inscricao_pendente";
   const redirect = location.origin + location.pathname;
-  const preview = new URLSearchParams(location.search).has("previewTema") || window.self !== window.top;
+  const previewName = new URLSearchParams(location.search).get("previewTema");
+  const preview = ["original","royal","cloud","aurora","emerald","studio","skyline"].includes(previewName) || window.self !== window.top;
   const say = (text, type = "info") => {
     message.textContent = text;
     message.dataset.type = type;
@@ -28,8 +29,12 @@
     return;
   }
 
+  // Em aparelhos compartilhados, uma nova aba/sessão não deve herdar
+  // o login Google que antes permanecia guardado no armazenamento duradouro.
+  try { localStorage.removeItem("feira_google_participacao"); } catch (_) {}
   const client = window.supabase.createClient(c.supabaseUrl, c.supabaseAnonKey, {
     auth: {
+      storage: window.sessionStorage,
       storageKey: "feira_google_participacao",
       detectSessionInUrl: true,
       autoRefreshToken: true,
