@@ -8,6 +8,14 @@ const items=[];const gallery=document.getElementById('gallery');const overlay=do
 <script src="config.js"></script>
 <script>
 (function(){
+ // Contabilizar somente visitantes reais na URL pública da feira.
+ // Prévia dos temas, iframe do admin e retorno vindo do painel não contam.
+ const path=location.pathname.replace(/\/+$/,"/");
+ if(path!=="/feira/" || new URLSearchParams(location.search).has("previewTema") || window.self!==window.top)return;
+ try{
+   const ref=new URL(document.referrer);
+   if(ref.origin===location.origin && /^\/feira\/admin(?:\/|$)/.test(ref.pathname))return;
+ }catch(e){}
  const c=window.FEIRA_CONFIG;
  if(!c?.supabaseUrl||!c?.supabaseAnonKey||!window.supabase)return;
  let visitor;
