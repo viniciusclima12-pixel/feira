@@ -29,7 +29,7 @@ const items=[];const gallery=document.getElementById('gallery');const overlay=do
    // Grava antes da requisição para impedir várias chamadas simultâneas.
    localStorage.setItem(key,String(Date.now()));
  }catch(e){return;}
- window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey).from("feira_visitas").insert({visitante_id:visitor})
+ (window.FEIRA_PUBLIC_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}})).from("feira_visitas").insert({visitante_id:visitor})
  .then(({error})=>{if(error){console.warn("Estatísticas:",error.message);try{localStorage.removeItem(key)}catch(e){}}});
 })();
 </script>
