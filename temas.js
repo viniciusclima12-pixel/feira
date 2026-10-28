@@ -35,5 +35,5 @@ const preview=new URLSearchParams(location.search).get("previewTema");
 if(preview&&Object.hasOwn(themes,preview)){apply(preview);return;}
 const c=window.FEIRA_CONFIG;
 if(!window.supabase||!c?.supabaseUrl||!c?.supabaseAnonKey)return;
-window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey).from("feira_tema").select("tema").eq("id",1).maybeSingle().then(({data,error})=>{if(!error&&data)apply(data.tema)}).catch(()=>{});
+(window.FEIRA_PUBLIC_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}})).from("feira_tema").select("tema").eq("id",1).maybeSingle().then(({data,error})=>{if(!error&&data)apply(data.tema)}).catch(()=>{});
 })();
