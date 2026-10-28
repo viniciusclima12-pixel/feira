@@ -1,7 +1,7 @@
 (async function(){
   const c=window.FEIRA_CONFIG;
   if(!c?.supabaseUrl||!c?.supabaseAnonKey||!window.supabase)return;
-  const client=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
+  const client=(window.FEIRA_PUBLIC_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}));
   const {data,error}=await client.from('feira_fotos').select('titulo,caminho,criado_em,posicao').limit(1000);
   if(error){console.warn('Fotos online indisponíveis:',error.message);return;}
   const grid=document.getElementById('gallery'),overlay=document.getElementById('overlay');
