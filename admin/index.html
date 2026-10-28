@@ -109,7 +109,7 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 const el=id=>document.getElementById(id),show=(id,on)=>el(id).classList.toggle("hidden",!on),say=msg=>el("status").textContent=msg;
 const c=window.FEIRA_CONFIG;
 if(!c?.supabaseUrl||!c?.supabaseAnonKey||!c?.adminEmail||!window.supabase){show("setup",true);return;}
-const db=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
+const db=(window.FEIRA_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{detectSessionInUrl:false}}));
 // Reconhecimento de texto local, no navegador: nenhuma chave de IA necessária.
 let recognitionPromise=null;
 let ocrLoadPromise=null;
@@ -184,13 +184,13 @@ imageArea.append(img,btn);info.append(title,actions);card.append(imageArea,info)
 async function movePhoto(id,delta){const all=window.feiraFotos||[];const i=all.findIndex(x=>x.id===id),j=i+delta;if(j<0||j>=all.length)return;[all[i],all[j]]=[all[j],all[i]];const changes=await Promise.all(all.map((f,index)=>db.from("feira_fotos").update({posicao:index+1}).eq("id",f.id)));const failed=changes.find(x=>x.error);if(failed){say("Erro ao ordenar: "+failed.error.message);await load();return;}say("Ordem atualizada.");renderPhotos();}
 async function loadTrash(){const {data,error}=await db.from("feira_lixeira").select("*").order("excluido_em",{ascending:false}).limit(100);const target=el("trash-items");target.replaceChildren();if(error){target.textContent="Erro: "+error.message;return;}if(!data.length){target.textContent="A lixeira está vazia.";return;}for(const f of data){const row=document.createElement("div");row.className="trash-row";const title=document.createElement("strong");title.textContent=f.titulo;const restore=document.createElement("button");restore.type="button";restore.textContent="Restaurar";restore.onclick=async()=>{restore.disabled=true;const added=await db.from("feira_fotos").insert({titulo:f.titulo,caminho:f.caminho,posicao:f.posicao});if(added.error){say("Erro ao restaurar: "+added.error.message);restore.disabled=false;return;}await db.from("feira_lixeira").delete().eq("id",f.id);say("Cartaz restaurado.");await loadTrash();await load();};row.append(title,restore);target.append(row);}}
 el("photo-search").addEventListener("input",renderPhotos);
-document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===button));for(const name of ["visao","fotos","lixeira","temas"])el("admin-"+name).classList.toggle("hidden",name!==tab);if(tab==="lixeira")loadTrash();if(tab==="fotos" && !window.feiraFotos)load();}));
+document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===button));for(const name of ["visao","fotos","lixeira","temas"])el("admin-"+name).classList.toggle("hidden",name!==tab);if(tab==="lixeira")loadTrash();if(tab==="fotos" && !window.feiraFotos)load();window.dispatchEvent(new CustomEvent("feira:aba",{detail:tab}));}));
 async function sync(){
 const {data:{session}}=await db.auth.getSession();
 const user=session?.user;
 let ok=false;if(user){const {data,error}=await db.rpc("e_admin_feira");ok=!error&&data===true;}
 show("login",!ok);show("panel",ok);
-if(ok){say("");}
+if(ok){say("");window.dispatchEvent(new Event("feira:autorizado"));}
 else if(user){await db.auth.signOut();say("Acesso não autorizado.");}
 }
 el("login-form").onsubmit=async e=>{
@@ -256,27 +256,31 @@ el("import-old").onclick=async()=>{
 await sync();
 })();
 </script><script>
-(async function(){
+(function(){
  const c=window.FEIRA_CONFIG;
  if(!c?.supabaseUrl||!c?.supabaseAnonKey||!window.supabase)return;
- const db=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
+ const db=window.FEIRA_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{detectSessionInUrl:false}});
  const section=document.getElementById("feira-stats");
+ let authorized=false,loaded=false,busy=false;
  const number=n=>Number(n||0).toLocaleString("pt-BR");
  async function refresh(){
-  const {data:{user}}=await db.auth.getUser();
-  if(!user){section.classList.add("hidden");return;}
-  const {data:allowed,error:checkError}=await db.rpc("e_admin_feira");
-  if(checkError||allowed!==true){section.classList.add("hidden");return;}
-  section.classList.remove("hidden");
-  const {data,error}=await db.rpc("estatisticas_feira");
-  if(error||!data){document.getElementById("stats-message").textContent="Não foi possível carregar as estatísticas.";return;}
-  document.getElementById("stat-total").textContent=number(data.total);
-  document.getElementById("stat-unicos").textContent=number(data.unicos);
-  document.getElementById("stat-hoje").textContent=number(data.hoje);
-  document.getElementById("stat-semana").textContent=number((data.dias||[]).slice(-7).reduce((sum,d)=>sum+Number(d.visitas||0),0));
-  document.getElementById("stats-message").textContent="Atualizado agora • Apenas administradores podem visualizar.";
+   if(!authorized||loaded||busy||document.getElementById("admin-visao").classList.contains("hidden"))return;
+   busy=true;section.classList.remove("hidden");
+   document.getElementById("stats-message").textContent="Carregando estatísticas...";
+   try{
+     const {data,error}=await db.rpc("estatisticas_feira");
+     if(error||!data)throw error||new Error("Dados indisponíveis");
+     document.getElementById("stat-total").textContent=number(data.total);
+     document.getElementById("stat-unicos").textContent=number(data.unicos);
+     document.getElementById("stat-hoje").textContent=number(data.hoje);
+     document.getElementById("stat-semana").textContent=number((data.dias||[]).slice(-7).reduce((sum,d)=>sum+Number(d.visitas||0),0));
+     document.getElementById("stats-message").textContent="Atualizado • Somente administradores";
+     loaded=true;
+   }catch(e){document.getElementById("stats-message").textContent="Estatísticas temporariamente indisponíveis."}
+   finally{busy=false}
  }
- db.auth.onAuthStateChange(()=>{setTimeout(refresh,0)});
- await refresh();
+ window.addEventListener("feira:autorizado",()=>{authorized=true;refresh()});
+ window.addEventListener("feira:aba",e=>{if(e.detail==="visao")refresh()});
+ db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){authorized=false;loaded=false;section.classList.add("hidden")}});
 })();
 </script><script src="temas-admin.js" defer></script></body></html>
