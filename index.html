@@ -55,17 +55,78 @@
 .site-nav-links{display:flex;gap:7px;align-items:center}
 .site-nav-links a{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 16px;border:1px solid transparent;border-radius:11px;color:#d5e3f0;text-decoration:none;font-size:.9rem;font-weight:700;transition:background .2s,color .2s}
 .site-nav-links a:hover,.site-nav-links a:focus-visible{background:#ffffff15;color:#fff}
-.site-nav-links a:last-child{border-color:#d8b66b77;background:#d8b66b19;color:#f4d797}
-.site-nav-links a:last-child:hover{background:#d8b66b35}
+.site-nav-links a[aria-current="location"]{background:var(--feira-accent-soft,#d8b66b22);border-color:var(--feira-accent-border,#d8b66b77);color:var(--feira-accent,#f4d797);box-shadow:inset 0 -2px 0 var(--feira-accent,#f4d797);}
+.site-nav-links a[aria-current="location"]:hover{background:var(--feira-accent-soft,#d8b66b35)}
 .site-nav a:focus-visible,.scroll-cue:focus-visible{outline:2px solid #f4d797;outline-offset:3px}
-#expositores,#inscricoes,#participar{scroll-margin-top:88px}
+#expositores,#inscricoes,#participar,#inicio{scroll-margin-top:calc(var(--feira-nav-height,64px) + 16px)}html{scroll-padding-top:calc(var(--feira-nav-height,64px) + 16px)}
 .scroll-cue{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:max-content;max-width:100%;margin:15px auto 30px;padding:10px 20px;border:1px solid #d8b66b40;border-radius:999px;color:#f0d18d;background:#ffffff08;text-decoration:none;font-weight:700;font-size:.83rem;transition:background .2s}
 .scroll-cue:hover{background:#d8b66b20}
 .scroll-cue svg{width:20px;height:20px;stroke:currentColor;animation:feira-bounce 2s ease-in-out infinite}
 @keyframes feira-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 @media(max-width:520px){.site-nav-inner{padding:8px 13px;min-height:58px}.site-nav-brand{font-size:.78rem}.site-nav-brand-mark{width:27px;height:27px}.site-nav-links a{padding:9px 11px;font-size:.78rem}.site-nav-links{gap:1px}.scroll-cue{margin:7px auto 22px}}
 @media(prefers-reduced-motion:reduce){.scroll-cue svg{animation:none}.site-nav-links a,.scroll-cue{transition:none}}
-</style></head><body><nav class="site-nav" aria-label="Navegação principal"><div class="site-nav-inner"><a class="site-nav-brand" href="#inicio" aria-label="Voltar ao início da feira"><span class="site-nav-brand-mark" aria-hidden="true">✦</span> FEIRA 2026</a><div class="site-nav-links"><a href="#expositores">Expositores</a><a href="#inscricoes">Inscrições</a></div></div></nav><div class="wrap"><header id="inicio"><div class="eyebrow">Aberto ao público • Entrada gratuita</div><h1>Feira da <span>Educação, Emprego</span> e Empreendedorismo</h1><p class="lead">Conheça os serviços, cursos, atividades e expositores participantes. Tudo em um só lugar.</p><div class="pills"><span class="pill">📅 07/11/2026 • Sábado</span><span class="pill">🕑 14h às 19h</span><span class="pill">📍 Rua Odir Gomes da Rocha, 515 • Tatuquara</span></div><a class="scroll-cue" href="#expositores" aria-label="Role para baixo para ver informações e expositores">Role para baixo e descubra mais <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></header><section id="expositores" aria-label="Cartazes da feira"><div class="intro"><h2>Informações e expositores</h2><p>Toque em qualquer cartaz para ampliar e ler os detalhes.</p></div><div class="gallery" id="gallery"></div></section><div class="intro" id="inscricoes" aria-label="Seção de inscrições"><h2>Inscrições</h2><p>Confirme sua presença gratuitamente com sua conta Google.</p></div><section id="participar" class="participar" aria-labelledby="participar-titulo">
+</style><style>
+/* Identidade visual integrada: os temas trocam as mesmas variáveis da navegação e inscrição. */
+:root{
+ --feira-accent:#f0cf8c;--feira-accent-border:#f0cf8c77;--feira-accent-soft:#f0cf8c1c;
+ --feira-nav-bg:#061a2df2;--feira-nav-text:#d5e3f0;--feira-ui-text:#fff;
+ --feira-ui-muted:#cbdaeb;--feira-ui-border:#d6b36e;
+ --feira-panel-bg:radial-gradient(ellipse at 87% 7%,#205274 0,transparent 43%),linear-gradient(134deg,#07182c 3%,#0b2945 54%,#0b304d 100%);
+ --feira-panel-inner:#04172874;--feira-panel-outline:#cedcf126;
+ --feira-subtle:#ffffff10;--feira-button-bg:linear-gradient(110deg,#f7d991,#dfb55e);
+ --feira-button-text:#10243a;--feira-ui-shadow:#0005;
+ --feira-success:#c8ffdf;--feira-success-bg:#22603f55;
+ --feira-error:#ffe4c9;--feira-error-bg:#732f1e42
+}
+.site-nav{background:var(--feira-nav-bg);border-bottom-color:var(--feira-accent-border)}
+.site-nav-brand{color:var(--feira-accent)}
+.site-nav-brand-mark{border-color:var(--feira-accent-border)}
+.site-nav-links a{color:var(--feira-nav-text)}
+.site-nav-links a:hover,.site-nav-links a:focus-visible{background:var(--feira-accent-soft);color:var(--feira-accent)}
+.site-nav-links a[aria-current="location"]{background:var(--feira-accent-soft);color:var(--feira-accent);border-color:var(--feira-accent-border)}
+.site-nav-links a[aria-current="location"]:hover{background:var(--feira-accent-soft)}
+.scroll-cue{border-color:var(--feira-accent-border);color:var(--feira-accent);background:var(--feira-accent-soft)}
+.scroll-cue:hover{background:var(--feira-accent-soft);filter:brightness(1.15)}
+.site-nav a:focus-visible,.scroll-cue:focus-visible{outline-color:var(--feira-accent)}
+.feira-section{position:relative}
+.feira-expositores{padding-top:16px;padding-bottom:16px}
+.feira-inscricoes-section{padding-top:18px}
+.feira-section .intro{margin:9px 0 23px}
+.feira-expositores .gallery{margin-bottom:14px}
+.feira-inscricoes-section .participar{margin-top:22px}
+.feira-divider{display:flex;align-items:center;justify-content:center;gap:12px;max-width:570px;margin:0 auto 16px;min-height:28px;color:var(--feira-accent)}
+.feira-divider-line{flex:1;max-width:240px;height:1px;background:linear-gradient(90deg,transparent,var(--feira-accent-border) 48%,var(--feira-accent))}
+.feira-divider-line:last-child{transform:rotate(180deg)}
+.feira-divider-dot{width:4px;height:4px;flex:0 0 4px;background:var(--feira-accent);border-radius:50%;opacity:.7}
+.feira-divider-icon{display:grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:50%;border:1px solid var(--feira-accent-border);background:var(--feira-accent-soft);font-size:16px;box-shadow:0 0 20px var(--feira-accent-soft)}
+.participar{background:var(--feira-panel-bg);border-color:var(--feira-ui-border);color:var(--feira-ui-text);box-shadow:0 18px 56px var(--feira-ui-shadow),0 0 0 4px var(--feira-accent-soft)}
+.participar::before{border-color:var(--feira-accent-border)}
+.participar::after{background:linear-gradient(125deg,var(--feira-accent-soft),transparent 27%,transparent 85%)}
+.participar-kicker{color:var(--feira-accent)}
+.participar-spark{background:var(--feira-accent);box-shadow:0 0 16px var(--feira-accent-soft)}
+.participar-top h2{color:var(--feira-ui-text)}
+.participar-top h2 span{color:var(--feira-accent)}
+.participar-top p,.participar-privacy{color:var(--feira-ui-muted)!important}
+.participar-top-icon{border-color:var(--feira-accent-border);background:var(--feira-accent-soft)}
+.participar-top-icon svg{stroke:var(--feira-accent)}
+.participar-main{background:var(--feira-panel-inner);border-color:var(--feira-panel-outline)}
+.participar-perfil-info strong{color:var(--feira-ui-text)}
+.participar-perfil-info span,.participar-conta-acoes>span,.participar-assurances,.participar-historico{color:var(--feira-ui-muted)}
+.participar-perfil-info small{color:var(--feira-success)}
+.participar-avatar{background:var(--feira-button-bg);color:var(--feira-button-text)}
+.participar .participar-trocar{background:var(--feira-subtle);border-color:var(--feira-accent-border);color:var(--feira-ui-text)}
+.participar .participar-novo{background:var(--feira-button-bg);color:var(--feira-button-text)}
+.participar-conta-acoes{border-top-color:var(--feira-panel-outline)}
+.participar-historico strong{color:var(--feira-accent)}
+.participar-status{color:var(--feira-ui-text)}
+.participar-status:not(:empty){background:var(--feira-subtle);border-color:var(--feira-panel-outline)}
+.participar-status[data-type="success"]{color:var(--feira-success);background:var(--feira-success-bg)}
+.participar-status[data-type="error"]{color:var(--feira-error);background:var(--feira-error-bg)}
+.participar-assurances{border-top-color:var(--feira-accent-border)}
+.participar-assurances svg{stroke:var(--feira-accent)}
+.participar button:focus-visible{outline-color:var(--feira-accent)}
+@media(max-width:520px){.feira-divider{gap:8px;max-width:90%}.feira-divider-icon{width:27px;height:27px;flex-basis:27px}.feira-expositores{padding-top:8px}.feira-inscricoes-section{padding-top:12px}.feira-section .intro{margin:7px 0 19px}}
+</style></head><body><nav class="site-nav" aria-label="Navegação principal"><div class="site-nav-inner"><a class="site-nav-brand" href="#inicio" aria-label="Voltar ao início da feira"><span class="site-nav-brand-mark" aria-hidden="true">✦</span> FEIRA 2026</a><div class="site-nav-links"><a href="#expositores">Expositores</a><a href="#inscricoes">Inscrições</a></div></div></nav><div class="wrap"><header id="inicio"><div class="eyebrow">Aberto ao público • Entrada gratuita</div><h1>Feira da <span>Educação, Emprego</span> e Empreendedorismo</h1><p class="lead">Conheça os serviços, cursos, atividades e expositores participantes. Tudo em um só lugar.</p><div class="pills"><span class="pill">📅 07/11/2026 • Sábado</span><span class="pill">🕑 14h às 19h</span><span class="pill">📍 Rua Odir Gomes da Rocha, 515 • Tatuquara</span></div><a class="scroll-cue" href="#expositores" aria-label="Role para baixo para ver informações e expositores">Role para baixo e descubra mais <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></header><section id="expositores" class="feira-section feira-expositores" aria-labelledby="expositores-titulo"><div class="feira-divider" aria-hidden="true"><span class="feira-divider-line"></span><span class="feira-divider-dot"></span><span class="feira-divider-icon">✦</span><span class="feira-divider-dot"></span><span class="feira-divider-line"></span></div><div class="intro"><h2 id="expositores-titulo">Informações e expositores</h2><p>Toque em qualquer cartaz para ampliar e ler os detalhes.</p></div><div class="gallery" id="gallery"></div></section><section id="inscricoes" class="feira-section feira-inscricoes-section" aria-labelledby="inscricoes-titulo"><div class="feira-divider" aria-hidden="true"><span class="feira-divider-line"></span><span class="feira-divider-dot"></span><span class="feira-divider-icon">✦</span><span class="feira-divider-dot"></span><span class="feira-divider-line"></span></div><div class="intro"><h2 id="inscricoes-titulo">Inscrições</h2><p>Confirme sua presença gratuitamente com sua conta Google.</p></div><section id="participar" class="participar" aria-labelledby="participar-titulo">
   <div class="participar-kicker"><span class="participar-spark" aria-hidden="true"></span> SUA PRESENÇA IMPORTA</div>
   <div class="participar-top">
     <div>
@@ -111,9 +172,57 @@
     <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Identificação pelo Google</span>
     <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg> Dados para organização do evento</span>
   </div>
-</section><footer>Feira da Educação, Emprego e Empreendedorismo • Entrada gratuita • Respeito aos dados dos participantes</footer></div><div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Visualização ampliada" tabindex="-1"><button class="close" id="close" aria-label="Fechar imagem">×</button><img id="large" alt=""><p id="label"></p><span class="hint">Toque fora da imagem ou pressione Esc para fechar</span></div><script>
+</section></section><footer>Feira da Educação, Emprego e Empreendedorismo • Entrada gratuita • Respeito aos dados dos participantes</footer></div><div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Visualização ampliada" tabindex="-1"><button class="close" id="close" aria-label="Fechar imagem">×</button><img id="large" alt=""><p id="label"></p><span class="hint">Toque fora da imagem ou pressione Esc para fechar</span></div><script>
 const items=[];const gallery=document.getElementById('gallery');const overlay=document.getElementById('overlay');const large=document.getElementById('large');const label=document.getElementById('label');items.forEach((it,i)=>{const tile=document.createElement('article');tile.className='tile';const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ampliar '+it.title);const img=document.createElement('img');img.src=it.src;img.alt=it.title;img.loading=i<2?'eager':'lazy';img.decoding='async';const title=document.createElement('strong');title.textContent=it.title;b.append(img,title);tile.append(b);gallery.append(tile);b.addEventListener('click',()=>{large.src=it.src;large.alt=it.title;label.textContent=it.title;overlay.classList.add('open');document.body.style.overflow='hidden';document.getElementById('close').focus()})});function closeOverlay(){overlay.classList.remove('open');document.body.style.overflow='';large.removeAttribute('src')}document.getElementById('close').addEventListener('click',closeOverlay);overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
-</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</script>
+<script>
+/* Navegação de seções: a aba só fica ativa quando o visitante está nela. */
+(function(){
+  const nav=document.querySelector(".site-nav");
+  if(!nav)return;
+  const links=[...nav.querySelectorAll('.site-nav-links a[href^="#"]')];
+  const sections=links.map(link=>({link,element:document.getElementById(link.hash.slice(1))})).filter(item=>item.element);
+  const reduced=()=>window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let scheduled=false;
+  const refresh=()=>{
+    scheduled=false;
+    const navHeight=nav.getBoundingClientRect().height;
+    document.documentElement.style.setProperty("--feira-nav-height",navHeight+"px");
+    const edge=window.scrollY+navHeight+32;
+    let current=null;
+    for(const item of sections){
+      const top=item.element.getBoundingClientRect().top+window.scrollY;
+      if(top<=edge)current=item;
+    }
+    for(const item of sections){
+      if(item===current)item.link.setAttribute("aria-current","location");
+      else item.link.removeAttribute("aria-current");
+    }
+  };
+  const schedule=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(refresh)}};
+  for(const item of sections){
+    item.link.addEventListener("click",event=>{
+      event.preventDefault();
+      const navHeight=nav.getBoundingClientRect().height;
+      const top=Math.max(0,item.element.getBoundingClientRect().top+window.scrollY-navHeight-14);
+      history.replaceState(null,"",item.link.hash);
+      window.scrollTo({top,behavior:reduced()?"instant":"smooth"});
+      schedule();
+    });
+  }
+  nav.querySelector('.site-nav-brand')?.addEventListener("click",event=>{
+    event.preventDefault();
+    history.replaceState(null,"","#inicio");
+    window.scrollTo({top:0,behavior:reduced()?"instant":"smooth"});
+    schedule();
+  });
+  window.addEventListener("scroll",schedule,{passive:true});
+  window.addEventListener("resize",schedule,{passive:true});
+  window.addEventListener("load",schedule);
+  schedule();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script>
 (function(){
@@ -143,5 +252,5 @@ const items=[];const gallery=document.getElementById('gallery');const overlay=do
 })();
 </script>
 <script src="galeria-online.js" defer></script><script src="inscricoes.js?v=google3" defer></script>
-<script src="temas.js" defer></script>
+<script src="temas.js?v=integracao2" defer></script>
 </body></html>
