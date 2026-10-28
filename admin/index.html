@@ -38,13 +38,31 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 @media (hover:none){.delete-btn{opacity:1}.photo .photo-image::after{opacity:.18}}
 .photo strong{display:block;overflow-wrap:anywhere}
 .title-hint{font-size:.87rem;color:#b9c9dc;margin-top:8px}
+</style><style>
+#feira-stats{margin:22px 0;border:1px solid #ffffff2b;background:linear-gradient(140deg,#123857,#0a233c);border-radius:20px;padding:24px}
+#feira-stats .stats-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#feira-stats .stats-eyebrow{font-size:12px;letter-spacing:.14em;color:#ffc52f;font-weight:800}
+#feira-stats .stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:18px}
+#feira-stats .stats-item{background:#071b30;border:1px solid #ffffff24;border-radius:15px;padding:18px;min-width:0}
+#feira-stats .stats-item .stat-top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#b9c9dc;font-size:13px}
+#feira-stats .stat-icon{color:#ffc52f;font-size:21px}
+#feira-stats .stat-value{font-size:clamp(30px,5vw,43px);line-height:1.25;font-weight:850;letter-spacing:-.04em;margin-top:12px;color:#fff}
+#feira-stats .stats-foot{font-size:12px;color:#b9c9dc;margin:14px 0 0}
+@media(max-width:440px){#feira-stats{padding:16px}#feira-stats .stats-grid{gap:9px}#feira-stats .stats-item{padding:12px}}
 </style></head><body><main>
 <div class="row"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Gerenciar fotos</h1><p class="muted">Adicione ou remova fotos sem editar o site.</p></div><a href="../">← Voltar ao site</a></div>
 <section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
 <section id="login" class="card hidden"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
 <form id="login-form"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
 <p><button id="login-btn" type="submit">Entrar no painel</button></p></form></section>
-<section id="panel" class="hidden">
+<section id="panel" class="hidden"><section id="feira-stats" class="hidden" aria-label="Estatísticas de acesso">
+<div class="stats-heading"><div><div class="stats-eyebrow">PAINEL ADMINISTRATIVO</div><h2 style="margin:5px 0 0">Estatísticas de acesso</h2></div><span style="font-size:28px;color:#ffc52f" aria-hidden="true">◉</span></div>
+<div class="stats-grid">
+<div class="stats-item"><div class="stat-top"><span>Total de visitas</span><span class="stat-icon" aria-hidden="true">◉</span></div><div id="stat-total" class="stat-value">—</div></div>
+<div class="stats-item"><div class="stat-top"><span>Visitantes únicos</span><span class="stat-icon" aria-hidden="true">♙</span></div><div id="stat-unicos" class="stat-value">—</div></div>
+<div class="stats-item"><div class="stat-top"><span>Visitas hoje</span><span class="stat-icon" aria-hidden="true">▣</span></div><div id="stat-hoje" class="stat-value">—</div></div>
+<div class="stats-item"><div class="stat-top"><span>Últimos 7 dias</span><span class="stat-icon" aria-hidden="true">↗</span></div><div id="stat-semana" class="stat-value">—</div></div>
+</div><p id="stats-message" class="stats-foot">Contagem iniciada após a publicação do contador.</p></section>
 <section class="card"><div class="row"><h2>Adicionar foto</h2><button class="secondary" id="logout" type="button">Sair</button></div>
 <form id="upload-form"><label for="title">Nome do expositor (opcional)</label><input id="title" maxlength="120" placeholder="Identificado automaticamente pela imagem"><p class="title-hint" id="title-hint">Ao selecionar uma foto, tentaremos identificar o nome do expositor. Você pode corrigir a sugestão.</p>
 <label for="file">Escolher foto (JPG, PNG ou WEBP, até 10 MB)</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp" required>
@@ -195,5 +213,29 @@ el("import-old").onclick=async()=>{
   }finally{btn.disabled=false;}
 };
 await sync();
+})();
+</script><script>
+(async function(){
+ const c=window.FEIRA_CONFIG;
+ if(!c?.supabaseUrl||!c?.supabaseAnonKey||!window.supabase)return;
+ const db=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
+ const section=document.getElementById("feira-stats");
+ const number=n=>Number(n||0).toLocaleString("pt-BR");
+ async function refresh(){
+  const {data:{user}}=await db.auth.getUser();
+  if(!user){section.classList.add("hidden");return;}
+  const {data:allowed,error:checkError}=await db.rpc("e_admin_feira");
+  if(checkError||allowed!==true){section.classList.add("hidden");return;}
+  section.classList.remove("hidden");
+  const {data,error}=await db.rpc("estatisticas_feira");
+  if(error||!data){document.getElementById("stats-message").textContent="Não foi possível carregar as estatísticas.";return;}
+  document.getElementById("stat-total").textContent=number(data.total);
+  document.getElementById("stat-unicos").textContent=number(data.unicos);
+  document.getElementById("stat-hoje").textContent=number(data.hoje);
+  document.getElementById("stat-semana").textContent=number((data.dias||[]).slice(-7).reduce((sum,d)=>sum+Number(d.visitas||0),0));
+  document.getElementById("stats-message").textContent="Atualizado agora • Apenas administradores podem visualizar.";
+ }
+ db.auth.onAuthStateChange(()=>{setTimeout(refresh,0)});
+ await refresh();
 })();
 </script></body></html>
