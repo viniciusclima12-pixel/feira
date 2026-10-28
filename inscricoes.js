@@ -4,10 +4,12 @@ const form=document.getElementById("participar-form"),msg=document.getElementByI
 if(!form||!window.supabase||!c?.supabaseUrl){return}
 const client=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{storageKey:"feira_inscricoes_auth",detectSessionInUrl:true,autoRefreshToken:false}});
 const say=t=>msg.textContent=t;
+const resend=document.createElement("button");resend.type="button";resend.textContent="Não recebi o e-mail — reenviar";resend.style.cssText="display:none;margin:8px 0 0;background:transparent;color:#ffe08a;border:1px solid #ffe08a;padding:10px 15px";msg.insertAdjacentElement("afterend",resend);
+resend.onclick=()=>{if(!requesting)form.requestSubmit()};
 const key="feira_inscricao_pendente";
 let finishing=false;
 let requesting=false;
-const mailKey="feira_confirmacao_email_ultima";
+
 async function finish(){
 if(finishing)return;
 let pending;
@@ -23,6 +25,7 @@ try{
  if(error)throw error;
  localStorage.removeItem(key);
  say("Inscrição confirmada! Seu e-mail foi verificado e o registro foi salvo.");
+ resend.style.display="none";
  form.reset();
 }catch(err){say("Não foi possível concluir: "+err.message)}
 finally{finishing=false}
@@ -38,15 +41,13 @@ try{
  localStorage.setItem(key,JSON.stringify({nome,email}));
  const {data:{session}}=await client.auth.getSession();
  if(session?.user?.email?.toLowerCase()===email){await finish();return}
- const last=JSON.parse(localStorage.getItem(mailKey)||"null");
- if(last?.email===email && Date.now()-last.at<120000){say("Já solicitamos a confirmação para este e-mail. Confira sua caixa de entrada e o spam antes de tentar novamente.");return;}
  const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname+"#participar",shouldCreateUser:true}});
  if(error)throw error;
- localStorage.setItem(mailKey,JSON.stringify({email,at:Date.now()}));
- say("Enviamos um link de confirmação para "+email+". Abra o link no mesmo navegador para concluir a inscrição. Confira também o spam.");
+ say("Solicitação enviada para "+email+". Confira a caixa de entrada, spam e a aba Promoções. Se não chegar, confira o endereço e use o botão Reenviar e-mail.");
+ resend.style.display="inline-block";
 }catch(err){
  const limited=err?.status===429||/rate limit|too many|limite|exceeded|email rate/i.test(err?.message||"");
- if(limited)say("O serviço de e-mail da feira atingiu o limite de envios. Não é erro no seu cadastro. Tente mais tarde; a organização precisa ampliar o limite de e-mails no Supabase.");
+ if(limited)say("O provedor de e-mail limitou temporariamente os envios. Isso não é um bloqueio do seu cadastro. Aguarde um pouco e tente reenviar; se continuar, a organização precisa configurar o serviço de e-mails.");
  else say("Erro ao enviar confirmação: "+err.message);
 }
 finally{btn.disabled=false;requesting=false}
