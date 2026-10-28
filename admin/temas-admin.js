@@ -11,7 +11,7 @@ skyline:["Skyline Blue","Azul urbano e detalhes luminosos","#102C56","#74D9FF","
 const byId=id=>document.getElementById(id);
 const c=window.FEIRA_CONFIG;
 if(!window.supabase||!c?.supabaseUrl||!c?.supabaseAnonKey)return;
-const db=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
+const db=window.FEIRA_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{detectSessionInUrl:false}});
 let selected="original",published="original",authorized=false;
 let loadPromise=null;
 const buttons=new Map();
@@ -79,8 +79,8 @@ loadPromise=loadInner().finally(()=>{loadPromise=null});
 return loadPromise;
 }
 async function loadInner(){
-const {data:{user},error:userError}=await db.auth.getUser();
-if(userError||!user){authorized=false;return}
+const {data:{session}}=await db.auth.getSession();
+if(!session?.user){authorized=false;return}
 const result=await db.rpc("e_admin_feira");
 if(result.error||result.data!==true){authorized=false;return}
 authorized=true;
@@ -93,6 +93,6 @@ let draft=null;try{draft=localStorage.getItem("feira_tema_rascunho")}catch(e){}
 if(!byId("tema-preview").getAttribute("src"))selected=Object.hasOwn(names,draft)?draft:published;
 preview();
 }
-db.auth.onAuthStateChange((_event,session)=>{if(!session)authorized=false;else if(!byId("admin-temas").classList.contains("hidden"))setTimeout(load,0)});
+db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)authorized=false;});
 document.querySelector('[data-tab="temas"]').addEventListener("click",load);
 })();
