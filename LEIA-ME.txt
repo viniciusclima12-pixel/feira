@@ -1,9 +1,18 @@
-SITE DA FEIRA - 8 IMAGENS
+ATUALIZAÇÃO DO SITE DA FEIRA - PAINEL ADMINISTRATIVO
 
-Para publicar no Netlify Drop:
-1. Extraia este ZIP.
-2. Abra https://app.netlify.com/drop
-3. Arraste a PASTA site-feira-atualizado para a area de envio.
-4. Use o endereco gerado para criar o QR Code.
+1. Não altere as oito imagens cartaz-01.png e cartaz-02.jpeg até cartaz-08.jpeg que já estão no GitHub.
+2. No repositório viniciusclima12-pixel/feira, envie estes arquivos mantendo os caminhos:
+   index.html (substituir o atual)
+   config.js (novo)
+   galeria-online.js (novo)
+   admin/index.html (novo, dentro da pasta admin)
+3. O GitHub Pages publicará os arquivos depois do commit.
+4. Site: https://viniciusclima12-pixel.github.io/feira/
+5. Painel: https://viniciusclima12-pixel.github.io/feira/admin/
+6. A senha do painel é a senha da conta criada em Authentication > Users no Supabase.
+7. As fotos originais continuam no GitHub. O painel exclui apenas as fotos que ele próprio adicionar.
+8. Se a página informar erro de login, verifique se a conta está confirmada no Supabase.
+9. Se informar acesso não autorizado, verifique se o SQL inseriu o usuário em public.feira_admins.
+10. NÃO coloque a senha da conta ou chaves secretas em nenhum arquivo do site.
 
-Nao envie o ZIP sem extrair, nem somente o index.html: as imagens precisam estar junto na pasta imagens.
+ATENÇÃO: A conexão GitHub do ChatGPT não tinha permissão de escrita; os arquivos precisam ser enviados manualmente.
