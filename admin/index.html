@@ -49,13 +49,18 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 #feira-stats .stat-value{font-size:clamp(30px,5vw,43px);line-height:1.25;font-weight:850;letter-spacing:-.04em;margin-top:12px;color:#fff}
 #feira-stats .stats-foot{font-size:12px;color:#b9c9dc;margin:14px 0 0}
 @media(max-width:440px){#feira-stats{padding:16px}#feira-stats .stats-grid{gap:9px}#feira-stats .stats-item{padding:12px}}
+</style><style>
+.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.admin-nav button{background:#12334f;color:#dcecff;border:1px solid #ffffff30}.admin-nav button.active{background:#ffc52f;color:#071e34}
+.admin-view{scroll-margin-top:18px}.photo-actions{display:flex;gap:6px;align-items:center;margin-top:10px}.photo-actions button{font-size:12px;padding:8px 10px}.photo-actions .move{background:#153c5c;color:#fff}.photo-actions .edit{background:#ffc52f}.photo .photo-image{padding:0}
+.admin-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.admin-toolbar input{max-width:310px}
+.admin-toast{color:#ffc52f;min-height:20px}.trash-row{display:flex;gap:12px;align-items:center;justify-content:space-between;border:1px solid #ffffff25;border-radius:12px;padding:12px;margin-top:10px;flex-wrap:wrap}
 </style></head><body><main>
 <div class="row"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Gerenciar fotos</h1><p class="muted">Adicione ou remova fotos sem editar o site.</p></div><a href="../">← Voltar ao site</a></div>
 <section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
 <section id="login" class="card hidden"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
 <form id="login-form"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
 <p><button id="login-btn" type="submit">Entrar no painel</button></p></form></section>
-<section id="panel" class="hidden"><section id="feira-stats" class="hidden" aria-label="Estatísticas de acesso">
+<section id="panel" class="hidden"><nav class="admin-nav" aria-label="Seções do painel"><button type="button" class="active" data-tab="visao">Visão geral</button><button type="button" data-tab="fotos">Gerenciar fotos</button><button type="button" data-tab="lixeira">Lixeira</button></nav><div id="admin-visao" class="admin-view"><section id="feira-stats" class="hidden" aria-label="Estatísticas de acesso">
 <div class="stats-heading"><div><div class="stats-eyebrow">PAINEL ADMINISTRATIVO</div><h2 style="margin:5px 0 0">Estatísticas de acesso</h2></div><span style="font-size:28px;color:#ffc52f" aria-hidden="true">◉</span></div>
 <div class="stats-grid">
 <div class="stats-item"><div class="stat-top"><span>Total de visitas</span><span class="stat-icon" aria-hidden="true">◉</span></div><div id="stat-total" class="stat-value">—</div></div>
@@ -63,15 +68,15 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 <div class="stats-item"><div class="stat-top"><span>Visitas hoje</span><span class="stat-icon" aria-hidden="true">▣</span></div><div id="stat-hoje" class="stat-value">—</div></div>
 <div class="stats-item"><div class="stat-top"><span>Últimos 7 dias</span><span class="stat-icon" aria-hidden="true">↗</span></div><div id="stat-semana" class="stat-value">—</div></div>
 </div><p id="stats-message" class="stats-foot">Contagem iniciada após a publicação do contador.</p></section>
-<section class="card"><div class="row"><h2>Adicionar foto</h2><button class="secondary" id="logout" type="button">Sair</button></div>
+</div><div id="admin-fotos" class="admin-view hidden"><section class="card"><div class="row"><h2>Adicionar foto</h2><button class="secondary" id="logout" type="button">Sair</button></div>
 <form id="upload-form"><label for="title">Nome do expositor (opcional)</label><input id="title" maxlength="120" placeholder="Identificado automaticamente pela imagem"><p class="title-hint" id="title-hint">Ao selecionar uma foto, tentaremos identificar o nome do expositor. Você pode corrigir a sugestão.</p>
 <label for="file">Escolher foto (JPG, PNG ou WEBP, até 10 MB)</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp" required>
 <p><button id="upload-btn" type="submit">Adicionar foto ao site</button></p></form></section>
-<section class="card" id="import-section"><h2>Importar as 8 imagens antigas</h2>
+<section class="card hidden" id="import-section"><h2>Importar as 8 imagens antigas</h2>
 <p class="muted">Clique uma única vez para copiar os cartazes antigos do GitHub para o Supabase. Os arquivos originais não serão apagados.</p>
 <button id="import-old" type="button">Importar as 8 imagens antigas</button>
 <p class="muted" id="import-progress" role="status" aria-live="polite"></p></section>
-<section class="card"><h2>Fotos adicionadas</h2><p class="muted">As 8 imagens originais continuam preservadas. Você pode excluir aqui as imagens adicionadas pelo painel.</p><div id="photos" class="grid"></div></section>
+<section class="card"><h2>Cartazes publicados</h2><p class="muted">Edite os nomes e use as setas para mudar a ordem. O primeiro cartaz fica fixado no topo até você alterar a ordem.</p><div class="admin-toolbar"><input id="photo-search" placeholder="Buscar cartaz pelo nome..." aria-label="Buscar cartaz"><span id="photo-count" class="muted"></span></div><div id="photos" class="grid"></div></section></div><div id="admin-lixeira" class="admin-view hidden"><section class="card"><h2>Lixeira de cartazes</h2><p class="muted">Restaure fotos removidas. Os arquivos são preservados no armazenamento.</p><div id="trash-items"></div></section></div>
 </section><p id="status" class="status" role="status" aria-live="polite"></p>
 </main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="../config.js"></script>
 <script>
@@ -122,11 +127,12 @@ el("file").addEventListener("change",()=>{
   recognitionPromise=suggestName(el("file").files[0]);
 });
 async function load(){
-const {data,error}=await db.from("feira_fotos").select("id,titulo,caminho").order("criado_em",{ascending:false}).limit(200);
+const {data,error}=await db.from("feira_fotos").select("id,titulo,caminho,criado_em,posicao").limit(500);
 if(error){say("Erro ao carregar: "+error.message);return;}
-const grid=el("photos");grid.replaceChildren();
+data.sort((a,b)=>(a.posicao??999999)-(b.posicao??999999)||new Date(a.criado_em)-new Date(b.criado_em));window.feiraFotos=data;renderPhotos();return;}
+function renderPhotos(){const data=window.feiraFotos||[];const search=(el("photo-search").value||"").toLocaleLowerCase("pt-BR");const grid=el("photos");grid.replaceChildren();el("photo-count").textContent=data.length+" cartazes";
 if(!data.length){const p=document.createElement("p");p.textContent="Ainda não há fotos enviadas.";grid.append(p);}
-for(const f of data){
+for(const f of data.filter(x=>x.titulo.toLocaleLowerCase("pt-BR").includes(search))){
 const card=document.createElement("article");card.className="photo";
 const img=document.createElement("img");img.src=db.storage.from("feira-fotos").getPublicUrl(f.caminho).data.publicUrl;img.alt=f.titulo;img.loading="lazy";
 const info=document.createElement("div"),title=document.createElement("strong");title.textContent=f.titulo;
@@ -137,14 +143,23 @@ btn.innerHTML='<svg width="25" height="25" viewBox="0 0 24 24" fill="none" strok
 btn.onclick=async()=>{
 if(!confirm('Excluir "'+f.titulo+'"?'))return;
 btn.disabled=true;say("Excluindo...");
+const archived=await db.from("feira_lixeira").insert({foto_id:f.id,titulo:f.titulo,caminho:f.caminho,posicao:f.posicao});if(archived.error){say("Erro na lixeira: "+archived.error.message);btn.disabled=false;return;}
 const result=await db.from("feira_fotos").delete().eq("id",f.id).select("id");
 if(result.error||!result.data?.length){say("Não foi possível excluir: "+(result.error?.message||"sem permissão"));btn.disabled=false;return;}
-const cleanup=await db.storage.from("feira-fotos").remove([f.caminho]);
-say(cleanup.error?"Foto removida do site; arquivo pendente de limpeza.":"Foto excluída.");await load();
+say("Foto enviada à lixeira.");await load();await loadTrash();
 };
+const actions=document.createElement("div");actions.className="photo-actions";
+const edit=document.createElement("button");edit.type="button";edit.className="edit";edit.textContent="Editar nome";edit.onclick=async()=>{const name=prompt("Nome do cartaz:",f.titulo);if(name===null||!name.trim())return;const {error}=await db.from("feira_fotos").update({titulo:name.trim()}).eq("id",f.id);if(error){say("Erro: "+error.message);return;}say("Nome atualizado.");await load();};
+const up=document.createElement("button");up.type="button";up.className="move";up.textContent="↑";up.title="Mover para cima";up.onclick=()=>movePhoto(f.id,-1);
+const down=document.createElement("button");down.type="button";down.className="move";down.textContent="↓";down.title="Mover para baixo";down.onclick=()=>movePhoto(f.id,1);
+actions.append(edit,up,down);
 const imageArea=document.createElement("div");imageArea.className="photo-image";
-imageArea.append(img,btn);info.append(title);card.append(imageArea,info);grid.append(card);
+imageArea.append(img,btn);info.append(title,actions);card.append(imageArea,info);grid.append(card);
 }}
+async function movePhoto(id,delta){const all=window.feiraFotos||[];const i=all.findIndex(x=>x.id===id),j=i+delta;if(j<0||j>=all.length)return;[all[i],all[j]]=[all[j],all[i]];const changes=await Promise.all(all.map((f,index)=>db.from("feira_fotos").update({posicao:index+1}).eq("id",f.id)));const failed=changes.find(x=>x.error);if(failed){say("Erro ao ordenar: "+failed.error.message);await load();return;}say("Ordem atualizada.");renderPhotos();}
+async function loadTrash(){const {data,error}=await db.from("feira_lixeira").select("*").order("excluido_em",{ascending:false}).limit(100);const target=el("trash-items");target.replaceChildren();if(error){target.textContent="Erro: "+error.message;return;}if(!data.length){target.textContent="A lixeira está vazia.";return;}for(const f of data){const row=document.createElement("div");row.className="trash-row";const title=document.createElement("strong");title.textContent=f.titulo;const restore=document.createElement("button");restore.type="button";restore.textContent="Restaurar";restore.onclick=async()=>{restore.disabled=true;const added=await db.from("feira_fotos").insert({titulo:f.titulo,caminho:f.caminho,posicao:f.posicao});if(added.error){say("Erro ao restaurar: "+added.error.message);restore.disabled=false;return;}await db.from("feira_lixeira").delete().eq("id",f.id);say("Cartaz restaurado.");await loadTrash();await load();};row.append(title,restore);target.append(row);}}
+el("photo-search").addEventListener("input",renderPhotos);
+document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===button));for(const name of ["visao","fotos","lixeira"])el("admin-"+name).classList.toggle("hidden",name!==tab);if(tab==="lixeira")loadTrash();}));
 async function sync(){
 const {data:{user}}=await db.auth.getUser();
 let ok=false;if(user){const {data,error}=await db.rpc("e_admin_feira");ok=!error&&data===true;}
