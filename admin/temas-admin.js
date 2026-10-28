@@ -13,11 +13,14 @@ const c=window.FEIRA_CONFIG;
 if(!window.supabase||!c?.supabaseUrl||!c?.supabaseAnonKey)return;
 const db=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey);
 let selected="original",published="original",authorized=false;
+let loadPromise=null;
 const buttons=new Map();
 const message=text=>byId("tema-message").textContent=text;
 function preview(){
 const url="../?previewTema="+encodeURIComponent(selected);
-byId("tema-preview").src=url;
+// Evita recarregar o iframe quando a autenticação ou a aba atualiza.
+const frame=byId("tema-preview");
+if(frame.getAttribute("src")!==url)frame.setAttribute("src",url);
 byId("tema-preview-link").href=url;
 for(const [key,btn] of buttons)btn.setAttribute("aria-pressed",String(key===selected));
 byId("tema-publish").disabled=selected===published;
@@ -71,6 +74,11 @@ message('Tema "'+name+'" publicado com sucesso. Os próximos visitantes verão a
 finally{btn.disabled=selected===published}
 };
 async function load(){
+if(loadPromise)return loadPromise;
+loadPromise=loadInner().finally(()=>{loadPromise=null});
+return loadPromise;
+}
+async function loadInner(){
 const {data:{user},error:userError}=await db.auth.getUser();
 if(userError||!user){authorized=false;return}
 const result=await db.rpc("e_admin_feira");
@@ -81,7 +89,9 @@ if(res.error){message("Erro ao carregar o tema publicado: "+res.error.message);r
 published=Object.hasOwn(names,res.data.tema)?res.data.tema:"original";
 byId("tema-publicado").textContent="Publicado: "+names[published][0];
 let draft=null;try{draft=localStorage.getItem("feira_tema_rascunho")}catch(e){}
-selected=Object.hasOwn(names,draft)?draft:published;preview();
+// Preserva a escolha atual durante atualizações de sessão e da aba.
+if(!byId("tema-preview").getAttribute("src"))selected=Object.hasOwn(names,draft)?draft:published;
+preview();
 }
 db.auth.onAuthStateChange((_event,session)=>{if(!session)authorized=false;else setTimeout(load,0)});
 document.querySelector('[data-tab="temas"]').addEventListener("click",load);
