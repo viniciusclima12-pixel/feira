@@ -32,7 +32,7 @@ function apply(name){
 }
 window.FEIRA_TEMAS={themes,apply};
 const preview=new URLSearchParams(location.search).get("previewTema");
-if(preview&&Object.hasOwn(themes,preview)){apply(preview);return;}
+if(preview&&Object.hasOwn(themes,preview)){apply(preview);window.addEventListener("message",event=>{if(event.origin!==location.origin||event.source!==window.parent||event.data?.type!=="feira:preview-tema")return;const next=event.data.tema;if(Object.hasOwn(themes,next))apply(next)});return;}
 const c=window.FEIRA_CONFIG;
 if(!window.supabase||!c?.supabaseUrl||!c?.supabaseAnonKey)return;
 (window.FEIRA_PUBLIC_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}})).from("feira_tema").select("tema").eq("id",1).maybeSingle().then(({data,error})=>{if(!error&&data)apply(data.tema)}).catch(()=>{});
