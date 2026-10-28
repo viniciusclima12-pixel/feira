@@ -15,13 +15,14 @@ function apply(name){
  const t=themes[name],style=document.createElement("style");style.id="feira-dynamic-theme";
  style.textContent=":root{color-scheme:"+((name==="cloud"||name==="studio")?"light":"dark")+";--navy:"+t[0]+";--gold:"+t[1]+";--text:"+t[2]+";--muted:"+t[3]+"}"+
  "body{background:"+t[8]+";color:var(--text);font-family:"+t[6]+"}.wrap{max-width:1160px}"+
- "header{padding:75px 0 45px}h1{font-size:clamp(2.2rem,5.7vw,4.2rem);line-height:1.08;max-width:980px}.lead{color:"+t[3]+";font-size:1.08rem}"+
+ "header{padding:48px 0 18px}h1{font-size:clamp(2.2rem,5.7vw,4.2rem);line-height:1.08;max-width:980px}.lead{color:"+t[3]+";font-size:1.08rem}"+
  ".pill{background:"+t[4]+";color:"+t[2]+";border:1px solid "+t[1]+"45;box-shadow:0 5px 20px #00000010}"+
  ".intro h2{color:"+t[2]+";font-size:clamp(1.8rem,3.5vw,2.6rem)}.intro p{color:"+t[3]+"}"+
  ".tile{background:"+t[4]+";border:1px solid "+t[1]+"35;border-radius:"+t[7]+";box-shadow:0 12px 35px #00000018;transition:transform .22s,box-shadow .22s,border-color .22s}"+
  ".tile:hover{transform:translateY(-5px);box-shadow:0 20px 42px #0000002b;border-color:"+t[1]+"}"+
  ".tile img{background:"+t[5]+"}.tile strong{font-family:system-ui,sans-serif;color:"+t[2]+"}"+
  "footer{color:"+t[3]+";border-color:"+t[1]+"38}"+
+ "@media(max-width:520px){header{padding:30px 0 12px}}"+
  "@media(prefers-reduced-motion:reduce){.tile{transition:none}.tile:hover{transform:none}}";
  // O tema também estiliza navegação, divisórias e inscrições (incluindo temas claros).
  const light=name==="cloud"||name==="studio";
