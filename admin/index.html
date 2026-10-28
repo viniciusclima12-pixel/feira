@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#061d34">
-<title>Painel de fotos | Feira</title>
+<title>Painel administrativo | Feira</title>
 <style>
 :root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;--gold:#ffc52f}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#164568,#061d34 65%);color:#eef5ff}
@@ -72,7 +72,7 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 </style></head><body><main>
 <div class="row"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Gerenciar fotos</h1><p class="muted">Adicione ou remova fotos sem editar o site.</p></div><a href="../">← Voltar ao site</a></div>
 <section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
-<section id="login" class="card hidden"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
+<section id="login" class="card"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
 <form id="login-form"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
 <p><button id="login-btn" type="submit">Entrar no painel</button></p></form></section>
 <section id="panel" class="hidden"><nav class="admin-nav" aria-label="Seções do painel"><button type="button" class="active" data-tab="visao">Visão geral</button><button type="button" data-tab="fotos">Gerenciar fotos</button><button type="button" data-tab="lixeira">Lixeira</button><button type="button" data-tab="temas">🎨 Temas do site</button></nav><div id="admin-visao" class="admin-view"><section id="feira-stats" class="hidden" aria-label="Estatísticas de acesso">
