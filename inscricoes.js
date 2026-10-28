@@ -6,6 +6,8 @@ const client=window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:
 const say=t=>msg.textContent=t;
 const key="feira_inscricao_pendente";
 let finishing=false;
+let requesting=false;
+const mailKey="feira_confirmacao_email_ultima";
 async function finish(){
 if(finishing)return;
 let pending;
@@ -29,16 +31,25 @@ form.addEventListener("submit",async e=>{
 e.preventDefault();
 const nome=document.getElementById("participar-nome").value.trim(),email=document.getElementById("participar-email").value.trim().toLowerCase();
 if(nome.length<3||!form.reportValidity())return;
-const btn=form.querySelector('button[type="submit"]');btn.disabled=true;say("Preparando confirmação por e-mail...");
+const btn=form.querySelector('button[type="submit"]');
+if(requesting)return;
+requesting=true;btn.disabled=true;say("Preparando confirmação por e-mail...");
 try{
  localStorage.setItem(key,JSON.stringify({nome,email}));
  const {data:{session}}=await client.auth.getSession();
  if(session?.user?.email?.toLowerCase()===email){await finish();return}
+ const last=JSON.parse(localStorage.getItem(mailKey)||"null");
+ if(last?.email===email && Date.now()-last.at<120000){say("Já solicitamos a confirmação para este e-mail. Confira sua caixa de entrada e o spam antes de tentar novamente.");return;}
  const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname+"#participar",shouldCreateUser:true}});
  if(error)throw error;
+ localStorage.setItem(mailKey,JSON.stringify({email,at:Date.now()}));
  say("Enviamos um link de confirmação para "+email+". Abra o link no mesmo navegador para concluir a inscrição. Confira também o spam.");
-}catch(err){say("Erro ao enviar confirmação: "+err.message)}
-finally{btn.disabled=false}
+}catch(err){
+ const limited=err?.status===429||/rate limit|too many|limite|exceeded|email rate/i.test(err?.message||"");
+ if(limited)say("O serviço de e-mail da feira atingiu o limite de envios. Não é erro no seu cadastro. Tente mais tarde; a organização precisa ampliar o limite de e-mails no Supabase.");
+ else say("Erro ao enviar confirmação: "+err.message);
+}
+finally{btn.disabled=false;requesting=false}
 });
 client.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_IN"&&session)setTimeout(finish,0)});
 finish();
