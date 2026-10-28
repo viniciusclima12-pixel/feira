@@ -153,7 +153,14 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 const el=id=>document.getElementById(id),show=(id,on)=>el(id).classList.toggle("hidden",!on),say=msg=>el("status").textContent=msg;
 const c=window.FEIRA_CONFIG;
 if(!c?.supabaseUrl||!c?.supabaseAnonKey||!c?.adminEmail||!window.supabase){show("setup",true);return;}
-const db=(window.FEIRA_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{auth:{detectSessionInUrl:false}}));
+// Sessão administrativa limitada à aba atual, reduzindo exposição em celulares compartilhados.
+try {
+ const host=new URL(c.supabaseUrl).hostname;
+ if(host.endsWith(".supabase.co"))localStorage.removeItem("sb-"+host.split(".")[0]+"-auth-token");
+} catch (_) {}
+const db=(window.FEIRA_DB ||= window.supabase.createClient(c.supabaseUrl,c.supabaseAnonKey,{
+ auth:{detectSessionInUrl:false,persistSession:true,storage:window.sessionStorage,storageKey:"feira_admin_session"}
+}));
 // Reconhecimento de texto local, no navegador: nenhuma chave de IA necessária.
 let recognitionPromise=null;
 let ocrLoadPromise=null;
