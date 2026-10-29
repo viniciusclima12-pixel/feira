@@ -167,3 +167,15 @@ body.feira-redesign{
 @media(prefers-reduced-motion:reduce){
  .feira-redesign .hero-link,.feira-redesign .gallery .tile,.feira-redesign .localizacao-link,.feira-redesign .participar .participar-google{transition:none}
 }
+
+/* Os dados do evento continuam legíveis em telas estreitas, sem cortes. */
+@media(max-width:560px){
+ .feira-redesign .event-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:0;row-gap:14px;align-items:start}
+ .feira-redesign .event-fact{min-width:0;max-width:none;margin:0;padding:0 12px 0 0;flex:none}
+ .feira-redesign .event-fact:nth-child(2){border-left:1px solid var(--feira-panel-outline);padding-left:16px;padding-right:0}
+ .feira-redesign .event-fact:nth-child(3){grid-column:1/-1;border:0;border-top:1px solid var(--feira-panel-outline);padding:14px 0 0}
+}
+@media(max-width:365px){
+ .feira-redesign .site-nav-brand-short{display:none}
+ .feira-redesign .event-fact strong{font-size:.84rem}
+}
