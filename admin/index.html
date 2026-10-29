@@ -113,7 +113,7 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
  #inscricoes-items .trash-row{align-items:flex-start}
  #inscricoes-items .trash-row span{font-size:.77rem}
 }
-.photo-display-type{display:block;margin:0 0 8px;color:#e9ca86;font-size:.78rem;font-weight:800;overflow-wrap:anywhere}.photo-actions{flex-wrap:wrap}.photo-actions button{min-height:40px}</style></head><body><main>
+.photo-display-type{display:block;margin:0 0 8px;color:#e9ca86;font-size:.78rem;font-weight:800;overflow-wrap:anywhere}.photo-actions{flex-wrap:wrap}.photo-actions button{min-height:40px}.photo-actions button.featured:disabled{opacity:1;cursor:default;background:#e9ca86;color:#10263b}.photo-actions button.move:disabled:not(.featured){opacity:.35;cursor:default}</style></head><body><main>
 <div class="row admin-header"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Painel administrativo</h1><p class="muted">Gerencie inscrições, cartazes e o visual do site.</p></div><div class="admin-header-actions"><a href="../">← Voltar ao site</a><button class="secondary hidden" id="logout" type="button">Sair da conta</button></div></div>
 <section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
 <section id="login" class="card"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
@@ -229,13 +229,14 @@ say("Foto enviada à lixeira.");await load();await loadTrash();
 };
 const actions=document.createElement("div");actions.className="photo-actions";
 const edit=document.createElement("button");edit.type="button";edit.className="edit";edit.textContent="Editar nome";edit.onclick=async()=>{const name=prompt("Nome do cartaz:",f.titulo);if(name===null||!name.trim())return;const {error}=await db.from("feira_fotos").update({titulo:name.trim()}).eq("id",f.id);if(error){say("Erro: "+error.message);return;}say("Nome atualizado.");await load();};
-const up=document.createElement("button");up.type="button";up.className="move";up.textContent="↑";up.title="Mover para cima";up.onclick=()=>movePhoto(f.id,-1);
-const down=document.createElement("button");down.type="button";down.className="move";down.textContent="↓";down.title="Mover para baixo";down.onclick=()=>movePhoto(f.id,1);
-const feature=document.createElement("button");feature.type="button";feature.className="move";feature.textContent=isFeatured?"★ Em destaque":"★ Destacar";feature.title="Exibir este cartaz grande, antes dos demais";feature.disabled=isFeatured;feature.onclick=()=>setFeatured(f.id);
+const up=document.createElement("button");up.type="button";up.className="move";up.textContent="↑";up.title="Mover para cima";up.setAttribute("aria-label","Mover "+f.titulo+" para cima");up.disabled=(window.feiraFotos||[])[0]?.id===f.id;up.onclick=()=>movePhoto(f.id,-1);
+const down=document.createElement("button");down.type="button";down.className="move";down.textContent="↓";down.title="Mover para baixo";down.setAttribute("aria-label","Mover "+f.titulo+" para baixo");down.disabled=(window.feiraFotos||[]).at(-1)?.id===f.id;down.onclick=()=>movePhoto(f.id,1);
+const feature=document.createElement("button");feature.type="button";feature.className="move";feature.textContent=isFeatured?"★ Em destaque":"★ Destacar";feature.title="Exibir este cartaz grande, antes dos demais";feature.disabled=isFeatured;feature.classList.toggle("featured",isFeatured);feature.onclick=()=>setFeatured(f.id);
 actions.append(edit,up,down,feature);
 const imageArea=document.createElement("div");imageArea.className="photo-image";
 imageArea.append(img,btn);info.append(displayType,title,actions);card.append(imageArea,info);grid.append(card);
 }}
+let savingPhotoOrder=false;
 async function setFeatured(id){
  const all=[...(window.feiraFotos||[])];const i=all.findIndex(x=>x.id===id);
  if(i<=0)return;
@@ -243,13 +244,26 @@ async function setFeatured(id){
  await savePhotoOrder(all,"Cartaz principal atualizado.");
 }
 async function savePhotoOrder(all,message){
+ if(savingPhotoOrder)return;
+ savingPhotoOrder=true;
+ document.querySelectorAll("#photos button").forEach(button=>button.disabled=true);
  say("Salvando ordem dos cartazes...");
- const changes=await Promise.all(all.map((f,index)=>db.from("feira_fotos").update({posicao:index+1}).eq("id",f.id)));
- const failed=changes.find(x=>x.error);
- if(failed){say("Erro ao ordenar: "+failed.error.message);await load();return;}
- say(message);await load();
+ try{
+  const changes=await Promise.all(all.map((f,index)=>db.from("feira_fotos").update({posicao:index+1}).eq("id",f.id).select("id")));
+  const failed=changes.find(x=>x.error||!x.data?.length);
+  if(failed){say("Não foi possível concluir a ordenação: "+(failed.error?.message||"sem confirmação do banco de dados"));await load();return;}
+  await load();
+  say(message);
+ }catch(error){
+  say("Erro ao ordenar: "+(error?.message||"falha inesperada"));
+  await load();
+ }finally{
+  savingPhotoOrder=false;
+  document.querySelectorAll("#photos button").forEach(button=>{if(!button.classList.contains("featured"))button.disabled=false;});
+  renderPhotos();
+ }
 }
-async function movePhoto(id,delta){const all=window.feiraFotos||[];const i=all.findIndex(x=>x.id===id),j=i+delta;if(j<0||j>=all.length)return;[all[i],all[j]]=[all[j],all[i]];await savePhotoOrder(all,"Ordem atualizada.");}
+async function movePhoto(id,delta){const all=[...(window.feiraFotos||[])];const i=all.findIndex(x=>x.id===id),j=i+delta;if(j<0||j>=all.length)return;[all[i],all[j]]=[all[j],all[i]];await savePhotoOrder(all,"Ordem atualizada.");}
 async function loadTrash(){const {data,error}=await db.from("feira_lixeira").select("*").order("excluido_em",{ascending:false}).limit(100);const target=el("trash-items");target.replaceChildren();if(error){target.textContent="Erro: "+error.message;return;}if(!data.length){target.textContent="A lixeira está vazia.";return;}for(const f of data){const row=document.createElement("div");row.className="trash-row";const title=document.createElement("strong");title.textContent=f.titulo;const restore=document.createElement("button");restore.type="button";restore.textContent="Restaurar";restore.onclick=async()=>{restore.disabled=true;const added=await db.from("feira_fotos").insert({titulo:f.titulo,caminho:f.caminho,posicao:f.posicao});if(added.error){say("Erro ao restaurar: "+added.error.message);restore.disabled=false;return;}await db.from("feira_lixeira").delete().eq("id",f.id);say("Cartaz restaurado.");await loadTrash();await load();};row.append(title,restore);target.append(row);}}
 el("photo-search").addEventListener("input",renderPhotos);
 document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{const tab=button.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>{b.classList.toggle("active",b===button);b.setAttribute("aria-pressed",String(b===button));});for(const name of ["visao","fotos","lixeira","temas"])el("admin-"+name).classList.toggle("hidden",name!==tab);if(tab==="lixeira")loadTrash();if(tab==="fotos" && !window.feiraFotos)load();window.dispatchEvent(new CustomEvent("feira:aba",{detail:tab}));}));
