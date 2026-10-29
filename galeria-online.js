@@ -40,8 +40,8 @@
     const img=document.createElement('img');
     img.src=url;img.alt=photo.titulo;img.loading=index===0?'eager':'lazy';img.decoding='async';
     const info=document.createElement('div');info.className='tile-info';
-    const title=document.createElement('strong');title.textContent=photo.titulo;
-    const hint=document.createElement('span');hint.className='tile-action';hint.textContent='Ver cartaz completo ↗';
+    const title=document.createElement('strong');title.textContent=photo.titulo.replace(/^Expositor:\s*/i,'');
+    const hint=document.createElement('span');hint.className='tile-action';hint.textContent='Abrir cartaz ↗';
     info.append(title,hint);
     if(index===0){
       const flag=document.createElement('span');
