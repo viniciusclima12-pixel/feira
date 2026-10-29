@@ -45,7 +45,7 @@
     info.append(title,hint);
     if(index===0){
       const flag=document.createElement('span');
-      flag.className='tile-featured-label';flag.textContent='Informações da feira';
+      flag.className='tile-featured-label';flag.textContent=/^(serviços e atividades gratuitos|informações da feira)$/i.test(photo.titulo.trim())?'Informações da feira':'Cartaz em destaque';
       tile.append(flag);
     }
     btn.append(img,info);tile.append(btn);grid.append(tile);
