@@ -17,17 +17,38 @@
     return new Date(a.criado_em)-new Date(b.criado_em);
   });
   grid.replaceChildren();
-  for(const photo of data){
-    const url=client.storage.from('feira-fotos').getPublicUrl(photo.caminho).data.publicUrl;
-    const tile=document.createElement('article');tile.className='tile';
-    const btn=document.createElement('button');btn.type='button';btn.setAttribute('aria-label','Ampliar '+photo.titulo);
-    const img=document.createElement('img');img.src=url;img.alt=photo.titulo;img.loading='lazy';img.decoding='async';
-    const title=document.createElement('strong');title.textContent=photo.titulo;
-    btn.append(img,title);tile.append(btn);grid.append(tile);
-    btn.addEventListener('click',()=>{
-      large.src=url;large.alt=photo.titulo;label.textContent=photo.titulo;
-      overlay.classList.add('open');document.body.style.overflow='hidden';
-      document.getElementById('close').focus();
-    });
+  if(!data.length){
+    const empty=document.createElement('p');
+    empty.className='gallery-empty';
+    empty.textContent='Os cartazes serão publicados em breve.';
+    grid.append(empty);
+    return;
   }
+  const openPoster=(photo,url)=>{
+    large.src=url;large.alt=photo.titulo;label.textContent=photo.titulo;
+    overlay.classList.add('open');document.body.style.overflow='hidden';
+    document.getElementById('close').focus();
+  };
+  // O primeiro cartaz continua em destaque. Os demais são cartões compactos.
+  data.forEach((photo,index)=>{
+    const url=client.storage.from('feira-fotos').getPublicUrl(photo.caminho).data.publicUrl;
+    const tile=document.createElement('article');
+    tile.className=index===0?'tile tile-featured':'tile tile-compact';
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.setAttribute('aria-label','Ampliar cartaz: '+photo.titulo);
+    const img=document.createElement('img');
+    img.src=url;img.alt=photo.titulo;img.loading=index===0?'eager':'lazy';img.decoding='async';
+    const info=document.createElement('div');info.className='tile-info';
+    const title=document.createElement('strong');title.textContent=photo.titulo;
+    const hint=document.createElement('span');hint.className='tile-action';hint.textContent='Ver cartaz completo ↗';
+    info.append(title,hint);
+    if(index===0){
+      const flag=document.createElement('span');
+      flag.className='tile-featured-label';flag.textContent='Informações da feira';
+      tile.append(flag);
+    }
+    btn.append(img,info);tile.append(btn);grid.append(tile);
+    btn.addEventListener('click',()=>openPoster(photo,url));
+  });
 })();
