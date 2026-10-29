@@ -128,7 +128,7 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
 <div class="stats-item"><div class="stat-top"><span>Últimos 7 dias</span><span class="stat-icon" aria-hidden="true">↗</span></div><div id="stat-semana" class="stat-value">—</div></div>
 </div><p id="stats-message" class="stats-foot">Contagem iniciada após a publicação do contador.</p></section>
 <section id="feira-inscricoes-panel" class="card" style="margin-top:20px"><div class="row"><div><div style="font-size:12px;color:#ffc52f;letter-spacing:.1em;font-weight:800">PARTICIPAÇÃO NO EVENTO</div><h2 style="margin:6px 0">Pessoas que vão participar</h2><p class="muted">Cada e-mail Google autenticado pode confirmar uma única participação.</p></div><button type="button" class="secondary" id="inscricoes-refresh">Atualizar inscrições</button></div><div class="row" style="margin:10px 0"><strong id="inscricoes-count">—</strong><input id="inscricoes-search" placeholder="Buscar por nome ou e-mail" aria-label="Buscar participantes" style="max-width:290px"></div><div id="inscricoes-items" style="max-height:420px;overflow:auto"><p class="muted">Abra a Visão geral para carregar inscrições.</p></div><p id="inscricoes-status" class="muted" role="status"></p></section></div><div id="admin-fotos" class="admin-view hidden"><section class="card"><div class="row"><h2>Adicionar foto</h2></div>
-<form id="upload-form"><label for="title">Nome do expositor (opcional)</label><input id="title" maxlength="120" placeholder="Identificado automaticamente pela imagem"><p class="title-hint" id="title-hint">Ao selecionar uma foto, tentaremos identificar o nome do expositor. Você pode corrigir a sugestão.</p>
+<form id="upload-form"><label for="title">Nome do expositor (confirme antes de publicar)</label><input id="title" maxlength="120" placeholder="Digite o nome correto do expositor" required autocomplete="off"><p class="title-hint" id="title-hint">A leitura automática pode sugerir um nome, mas você precisa conferir e confirmar para evitar nomes errados.</p><label style="display:flex;align-items:flex-start;gap:10px;margin:12px 0;cursor:pointer"><input id="confirm-title" type="checkbox" required style="width:20px;height:20px;flex-shrink:0;margin-top:2px"><span>Conferi o cartaz e confirmo que este é o nome correto do expositor.</span></label>
 <label for="file">Escolher foto (JPG, PNG ou WEBP, até 10 MB)</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp" required>
 <p><button id="upload-btn" type="submit">Adicionar foto ao site</button></p></form></section>
 <section class="card hidden" id="import-section"><h2>Importar as 8 imagens antigas</h2>
@@ -179,7 +179,7 @@ function loadOCR(){
 function guessName(text){
   const excluded=/^(feira|educa[cç][aã]o|emprego|empreendedorismo|expositor(?:es)?|inscri[cç][oõ]es|local|data|hor[aá]rio|gratuito|entrada|programa[cç][aã]o|mais informa[cç][oõ]es|acesse|visite|instagram|whatsapp|telefone|contato|apoio|realiza[cç][aã]o|patroc[ií]nio|prefeitura|curitiba|tatuquara|rua\b|www\.|https?:|@)/i;
   const lines=text.split(/\r?\n/).map(x=>x.trim().replace(/\s+/g," ")).filter(Boolean);
-  return lines.find(x=>x.length>=4 && x.length<=65 && !excluded.test(x) &&
+  return lines.find(x=>x.length>=4 && x.length<=65 && !excluded.test(x) && !/conectando pessoas|oportunidades|transformando vidas|venha conhecer|saiba mais|juntos por|um futuro|nossa miss[aã]o|seja bem.vindo/i.test(x) &&
     !/\d{3,}|[/:@]|\b202\d\b|R\$/i.test(x) && /[a-záàâãéêíóôõúç]/i.test(x))||"";
 }
 async function suggestName(file){
@@ -191,15 +191,16 @@ async function suggestName(file){
     const result=await window.Tesseract.recognize(file,"por+eng");
     if(el("file").files[0]!==file)return;
     const suggested=guessName(result.data.text||"");
-    if(suggested && !el("title").value.trim())el("title").value=suggested;
+    if(suggested && !el("title").value.trim()){el("title").value=suggested;el("confirm-title").checked=false;}
     hint.textContent=suggested
       ?"Nome sugerido. Confira antes de publicar, pois a leitura pode errar."
-      :"Não foi possível identificar um nome. Se deixar vazio, usaremos 'Expositor da feira'.";
+       :"Não foi possível identificar o nome com segurança. Digite o nome correto antes de publicar.";
   }catch(err){
-    hint.textContent="Leitura automática indisponível. Se deixar vazio, usaremos 'Expositor da feira'.";
+    hint.textContent="Leitura automática indisponível. Digite o nome correto antes de publicar.";
   }
 }
 el("file").addEventListener("change",()=>{
+  el("confirm-title").checked=false;
   recognitionPromise=suggestName(el("file").files[0]);
 });
 async function load(){
@@ -255,7 +256,8 @@ el("logout").onclick=async()=>{await db.auth.signOut();say("Você saiu.");await 
 el("upload-form").onsubmit=async e=>{
 e.preventDefault();const file=el("file").files[0];
 if(recognitionPromise){say("Concluindo análise da imagem...");await recognitionPromise;recognitionPromise=null;}
-const title=el("title").value.trim()||"Expositor da feira";
+const title=el("title").value.trim();
+if(!title||!el("confirm-title").checked){say("Confira e confirme o nome do expositor antes de publicar.");return;}
 const ext={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"}[file?.type];
 if(!ext){say("Selecione JPG, PNG ou WEBP.");return;}
 if(file.size>10485760){say("A foto deve ter até 10 MB.");return;}
@@ -267,7 +269,7 @@ const sent=await db.storage.from("feira-fotos").upload(path,file,{contentType:fi
 if(sent.error)throw sent.error;
 const saved=await db.from("feira_fotos").insert({titulo:title,caminho:path});
 if(saved.error){await db.storage.from("feira-fotos").remove([path]);throw saved.error;}
-el("upload-form").reset();el("title-hint").textContent="Ao selecionar uma foto, tentaremos identificar o nome do expositor. Você pode corrigir a sugestão.";
+el("upload-form").reset();el("title-hint").textContent="A leitura automática pode sugerir um nome, mas você precisa conferir e confirmar antes de publicar.";
 say("Foto publicada!");await load();
 }catch(err){say("Erro: "+err.message);}
 finally{btn.disabled=false;}
