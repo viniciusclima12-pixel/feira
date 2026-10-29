@@ -198,56 +198,104 @@
 @media(max-width:650px){.site-nav-inner{gap:5px;padding:8px 9px}.site-nav-links{gap:0;min-width:0}.site-nav-links a{padding:9px 7px;font-size:.72rem;white-space:nowrap}.site-nav-brand{gap:4px;font-size:.74rem}.site-nav-brand-mark{width:25px;height:25px;flex:0 0 25px}.gallery .tile-compact img{width:94px;flex-basis:94px;height:108px;max-height:none}.gallery .tile-featured img{height:auto;max-height:500px}.localizacao-card{gap:12px;padding:20px 16px}.localizacao-icon{flex-basis:42px;height:42px;font-size:1.3rem}}
 @media(max-width:390px){.site-nav-inner{padding:8px 6px}.site-nav-links a{padding:8px 5px;font-size:.66rem}.site-nav-brand{font-size:.68rem}.site-nav-brand-mark{width:22px;height:22px;flex-basis:22px}.localizacao-icon{display:none}}
 
-/* Localização redesenhada: seção independente, espaçosa e responsiva. */
-.feira-expositores{margin-bottom:0}
-.feira-localizacao{margin:clamp(74px,10vw,132px) 0 clamp(82px,11vw,146px);padding:0;position:relative}
-.feira-localizacao::before{content:"";display:block;width:74px;height:1px;margin:0 auto 40px;background:linear-gradient(90deg,transparent,var(--feira-accent,#eacb86),transparent)}
-.localizacao-heading{text-align:center;max-width:580px;margin:0 auto 31px}
-.localizacao-kicker{display:inline-flex;align-items:center;gap:9px;color:var(--feira-accent,#eacb86);font-size:.72rem;font-weight:850;letter-spacing:.17em}
-.localizacao-kicker-dot,.localizacao-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--feira-accent,#eacb86);box-shadow:0 0 0 4px #d8b66b24}
-.localizacao-heading h2{font-size:clamp(1.85rem,4vw,2.7rem);line-height:1.14;letter-spacing:-.035em;margin:13px 0 12px;color:var(--text,#f7f8fc)}
-.localizacao-heading h2 em{font-style:normal;color:var(--feira-accent,#eacb86)}
-.localizacao-heading p{margin:0 auto;color:var(--muted,#b6c7d6);line-height:1.65;font-size:.96rem}
-.localizacao-card{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:0;overflow:hidden;border:1px solid var(--feira-accent-border,#d4b46e55);border-radius:24px;background:#0b2339;box-shadow:0 22px 60px #0004,0 1px 0 #ffffff0a inset;padding:0;align-items:stretch}
-.localizacao-visual{position:relative;min-height:325px;overflow:hidden;background:radial-gradient(ellipse at 63% 48%,#264b62 0%,#122e46 40%,#0a2239 80%);isolation:isolate}
-.localizacao-visual-grid{position:absolute;inset:-50%;opacity:.27;transform:rotate(-27deg);background:repeating-linear-gradient(0deg,transparent 0 45px,#8ab3c31d 46px 48px,transparent 49px 89px),repeating-linear-gradient(90deg,transparent 0 55px,#a8cbd52c 56px 58px,transparent 59px 110px)}
-.localizacao-route{position:absolute;border:2px solid #e6c47d80;border-radius:90px;transform:rotate(-24deg)}
-.localizacao-route-one{width:260px;height:140px;top:30%;left:8%;border-right-color:transparent;border-bottom-color:transparent}
-.localizacao-route-two{width:320px;height:180px;top:15%;left:32%;border-left-color:transparent;border-top-color:transparent}
-.localizacao-pin{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:74px;height:74px;border:1px solid #ffebb1a1;border-radius:22px;display:grid;place-items:center;background:linear-gradient(145deg,#eacb86,#bb8f43);color:#10253a;font-size:3.1rem;font-weight:700;box-shadow:0 0 0 13px #eacb8617,0 18px 42px #0007}
-.localizacao-visual-label{position:absolute;bottom:24px;left:25px;color:#d8e5ee;font-size:.71rem;font-weight:850;letter-spacing:.17em}
-.localizacao-visual-label span{color:#eacb86;padding:0 5px}
-.localizacao-info{display:flex;flex-direction:column;justify-content:center;align-items:stretch;padding:clamp(24px,4.2vw,45px);min-width:0}
-.localizacao-eyebrow{display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:850;letter-spacing:.15em;color:var(--feira-accent,#eacb86)}
-.localizacao-info h3{font-size:clamp(1.5rem,3vw,2.15rem);letter-spacing:-.03em;line-height:1.2;color:#fff;margin:13px 0 26px}
-.localizacao-address{display:flex;gap:13px;align-items:flex-start;margin-bottom:20px}
-.localizacao-address-icon{flex:0 0 39px;width:39px;height:39px;border:1px solid #ffffff21;border-radius:11px;background:#ffffff0a;display:grid;place-items:center;color:#eacb86;font-size:1.65rem}
-.localizacao-address p{margin:0;color:#fff;line-height:1.45}
-.localizacao-address strong{display:block;font-size:1rem;color:#fff;overflow-wrap:anywhere}
-.localizacao-address p span{display:block;margin-top:5px;font-size:.89rem;color:#adbfce}
-.localizacao-date{display:flex;align-items:center;gap:11px;color:#d3e0eb;font-size:.87rem;margin-bottom:25px}
-.localizacao-date>span:first-child{color:#eacb86;font-size:1.5rem}
-.localizacao-date strong{color:#eacb86;padding:0 3px}
-.localizacao-link{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:54px;padding:9px 10px 9px 18px;border-radius:12px;background:var(--feira-accent,#eacb86);color:#10283d!important;font-size:.91rem;font-weight:850;text-decoration:none;box-shadow:0 8px 25px #0003;transition:transform .2s,filter .2s}
-.localizacao-link-arrow{width:36px;height:36px;display:grid;place-items:center;border-radius:9px;background:#071f321d;font-size:1.4rem}
-.localizacao-link:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.localizacao-link:focus-visible{outline:3px solid white;outline-offset:4px}
-.localizacao-footnote{display:block;margin-top:14px;text-align:center;font-size:.78rem;color:#9fb5c5}
-@media(max-width:700px){.feira-localizacao{margin:76px 0 90px}.localizacao-heading{margin-bottom:25px}.localizacao-card{grid-template-columns:1fr;border-radius:20px}.localizacao-visual{min-height:160px}.localizacao-pin{width:56px;height:56px;border-radius:17px;font-size:2.4rem}.localizacao-info{padding:25px 20px 26px}.localizacao-info h3{margin:10px 0 22px}.localizacao-visual-label{bottom:15px;left:18px;font-size:.65rem}}
-@media(prefers-reduced-motion:reduce){.localizacao-link{transition:none}}
-</style></head><body><nav class="site-nav" aria-label="Navegação principal"><div class="site-nav-inner"><a class="site-nav-brand" href="#inicio" aria-label="Voltar ao início da feira"><span class="site-nav-brand-mark" aria-hidden="true">✦</span><span class="site-nav-brand-long">FEIRA 2026</span><span class="site-nav-brand-short" aria-hidden="true">FEIRA</span></a><div class="site-nav-links"><a href="#expositores">Expositores</a><a href="#localizacao">Como chegar</a><a href="#inscricoes">Inscrições</a></div></div></nav><div class="wrap"><header id="inicio"><div class="eyebrow">Aberto ao público • Entrada gratuita</div><h1>Feira da <span>Educação, Emprego</span> e Empreendedorismo</h1><p class="lead">Conheça os serviços, cursos, atividades e expositores participantes. Tudo em um só lugar.</p><div class="pills"><span class="pill">📅 07/11/2026 • Sábado</span><span class="pill">🕑 14h às 19h</span></div><a class="scroll-cue" href="#expositores" aria-label="Role para baixo para ver informações e expositores">Role para baixo e descubra mais <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></header><section id="expositores" class="feira-section feira-expositores" aria-labelledby="expositores-titulo"><div class="feira-divider" aria-hidden="true"><span class="feira-divider-line"></span><span class="feira-divider-dot"></span><span class="feira-divider-icon">✦</span><span class="feira-divider-dot"></span><span class="feira-divider-line"></span></div><div class="intro"><h2 id="expositores-titulo">Expositores confirmados</h2><p>O primeiro cartaz reúne informações da feira. Toque em um expositor para ver o cartaz completo.</p></div><div class="gallery" id="gallery"></div></section><section id="localizacao" class="feira-section feira-localizacao" aria-labelledby="localizacao-titulo">
-<div class="localizacao-heading"><span class="localizacao-kicker"><span class="localizacao-kicker-dot"></span> ENCONTRE A FEIRA</span><h2 id="localizacao-titulo">Seu próximo destino é <em>aqui.</em></h2><p>Estamos esperando por você! Confira o endereço e abra a rota diretamente no seu celular.</p></div>
+
+/* Direção de arte 2026: conteúdo primeiro, detalhes só onde ajudam. */
+.feira-section .intro{margin:0 auto 24px;max-width:660px}
+.feira-section .intro h2{font-weight:750;letter-spacing:-.025em}
+.feira-divider{display:flex;align-items:center;justify-content:center;gap:19px;width:min(100%,640px);max-width:none;min-height:auto;margin:0 auto 30px;padding:0 12px;color:var(--feira-accent,#e7c77c)}
+.feira-divider-line,.feira-divider-line:last-child{width:auto;max-width:none;flex:1;height:1px;background:var(--feira-accent-border,#d8b66b55);opacity:.75;transform:none}
+.feira-divider-label{font-size:.72rem;font-weight:750;letter-spacing:.18em;line-height:1.4;white-space:nowrap}
+.feira-divider-dot,.feira-divider-icon{display:none}
+.feira-expositores{padding-top:35px}
+.gallery .tile{border-radius:13px;background:var(--feira-subtle,#ffffff0a);border-color:var(--feira-ui-border,#ffffff24);box-shadow:none}
+.gallery .tile:hover{border-color:var(--feira-accent-border,#d8b66b77)}
+.gallery .tile-compact img{object-fit:contain;background:transparent;border-right:1px solid var(--feira-panel-outline,#ffffff18);padding:9px}
+.gallery .tile-featured{border-radius:16px;border-color:var(--feira-ui-border,#ffffff24)}
+.gallery .tile-featured-label{background:#0a263ae8;color:#f1d7a0;border:1px solid #e4c68666;border-radius:5px;box-shadow:none}
+.feira-localizacao{margin:clamp(88px,11vw,136px) 0 clamp(96px,12vw,150px);padding:0}
+.feira-localizacao::before{display:none}
+.feira-localizacao .feira-divider{margin-bottom:32px}
+.localizacao-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:clamp(26px,6vw,76px)}
+.localizacao-copy h2{margin:0 0 16px;font-size:clamp(2rem,4.1vw,3.1rem);letter-spacing:-.046em;font-weight:750;line-height:1.17}
+.localizacao-copy h2 span{color:var(--feira-accent,#e7c77c)}
+.localizacao-copy p{margin:0;max-width:400px;color:var(--muted,#adbfd0);font-size:.97rem;line-height:1.8}
+.localizacao-card{position:relative;display:block;overflow:hidden;border:1px solid var(--feira-ui-border,#ffffff26);border-radius:16px;padding:clamp(24px,4vw,36px);background:var(--feira-panel-bg,#0e2a42);box-shadow:0 12px 36px var(--feira-ui-shadow,#0003)}
+.localizacao-topline{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:28px;color:var(--feira-accent,#e7c77c);font-size:.7rem;font-weight:750;letter-spacing:.14em}
+.localizacao-topline svg{width:25px;height:25px;flex:0 0 25px}
+.localizacao-info{display:block;padding:0}
+.localizacao-card h3{margin:0 0 7px;color:var(--feira-ui-text,#fff);font-size:clamp(1.25rem,2.4vw,1.55rem);line-height:1.35;letter-spacing:-.027em;font-weight:760}
+.localizacao-bairro{margin:0 0 27px!important;color:var(--feira-ui-muted,#c2d0db);font-size:.94rem}
+.localizacao-details{display:flex;flex-wrap:wrap;gap:10px 19px;margin-bottom:23px;padding:19px 0;border-top:1px solid var(--feira-panel-outline,#ffffff22);border-bottom:1px solid var(--feira-panel-outline,#ffffff22);font-size:.82rem;color:var(--feira-ui-muted,#bdcbd8)}
+.localizacao-link{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:52px;gap:15px;padding:12px 15px 12px 18px;border-radius:9px;background:var(--feira-button-bg,#e6c47d);color:var(--feira-button-text,#14283a)!important;font-size:.93rem;font-weight:750;text-decoration:none;transition:filter .18s}
+.localizacao-link-arrow{display:grid;place-items:center;font-size:1.3rem;font-weight:400}
+.localizacao-link:hover{transform:none;filter:brightness(1.07)}
+.localizacao-link:focus-visible{outline:3px solid var(--feira-accent,#e7c77c);outline-offset:4px}
+.feira-inscricoes-section{padding-top:0}
+.feira-inscricoes-section .feira-divider{margin-bottom:27px}
+.intro-inscricoes{margin-bottom:25px!important}
+.feira-inscricoes-section .participar{margin-top:0}
+.participar{max-width:850px;margin:0 auto 70px;padding:clamp(24px,4.5vw,44px);border:1px solid var(--feira-ui-border,#ffffff24);border-radius:17px;background:var(--feira-panel-bg,#0d273e);box-shadow:0 12px 36px var(--feira-ui-shadow,#0003);overflow:visible}
+.participar::before,.participar::after{display:none}
+.participar-kicker{gap:0;color:var(--feira-accent,#e7c77c);font-size:.7rem;letter-spacing:.16em;font-weight:760}
+.participar-spark{display:none}
+.participar-top{margin-top:16px;gap:0}
+.participar-top h2{font-family:inherit;font-weight:760;letter-spacing:-.035em;font-size:clamp(1.6rem,3.7vw,2.35rem);line-height:1.18;color:var(--feira-ui-text,#fff)}
+.participar-top h2 span{color:var(--feira-accent,#e7c77c)}
+.participar-top p{margin:11px 0 0;max-width:530px;font-size:.96rem;line-height:1.65;color:var(--feira-ui-muted,#b8c8d8)}
+.participar-top-icon{display:none}
+.participar-main{margin-top:26px;padding:24px 0 0;border:0;border-top:1px solid var(--feira-panel-outline,#ffffff24);border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none}
+.participar .participar-google{display:flex;justify-content:center;align-items:center;gap:13px;width:100%;max-width:420px;min-height:55px;border-radius:9px;border:1px solid #d5dce4;padding:13px 18px;background:#fff;box-shadow:0 3px 13px #0000001b;color:#203145;font-family:inherit;font-size:.96rem;font-weight:700;letter-spacing:0;transition:box-shadow .18s,background .18s}
+.participar .participar-google:hover{transform:none;background:#f8fafc;box-shadow:0 5px 18px #00000024}
+.participar-google svg{width:22px;height:22px}
+.participar-arrow{margin-left:auto;color:#63758b;font-size:1.1rem}
+.participar-privacy{max-width:560px;font-size:.81rem;line-height:1.65!important;margin:14px 0 0!important;color:var(--feira-ui-muted,#b7c7d7)!important}
+.participar-assurances{display:none}
+.participar-perfil{gap:13px}
+.participar-avatar{width:46px;height:46px;border-radius:11px;box-shadow:none}
+.participar-perfil-info strong{font-size:1rem}
+.participar .participar-novo{border-radius:9px;box-shadow:none;font-weight:750}
+.participar .participar-trocar{border-radius:9px}
+.participar-status:not(:empty){border-radius:9px}
+@media(max-width:700px){
+.feira-divider{gap:12px;margin-bottom:23px;padding:0 2px}
+.feira-divider-label{font-size:.64rem;letter-spacing:.15em}
+.feira-expositores{padding-top:20px}
+.feira-localizacao{margin:82px 0 100px}
+.feira-localizacao .feira-divider{margin-bottom:26px}
+.localizacao-layout{grid-template-columns:1fr;gap:26px}
+.localizacao-copy h2{font-size:clamp(1.75rem,7.4vw,2.4rem);margin-bottom:10px}
+.localizacao-copy p{font-size:.93rem}
+.localizacao-card{padding:24px 21px;border-radius:14px}
+.localizacao-topline{margin-bottom:22px}
+.localizacao-bairro{margin-bottom:22px!important}
+.localizacao-details{gap:8px;margin-bottom:18px;padding:16px 0}
+.participar{padding:25px 20px;margin:0 0 54px;border-radius:14px}
+.participar-main{padding-top:21px;margin-top:23px}
+.participar .participar-google{max-width:none;width:100%;font-size:.94rem;min-height:54px}
+}
+@media(prefers-reduced-motion:reduce){.participar .participar-google,.localizacao-link{transition:none}}
+</style></head><body><nav class="site-nav" aria-label="Navegação principal"><div class="site-nav-inner"><a class="site-nav-brand" href="#inicio" aria-label="Voltar ao início da feira"><span class="site-nav-brand-mark" aria-hidden="true">✦</span><span class="site-nav-brand-long">FEIRA 2026</span><span class="site-nav-brand-short" aria-hidden="true">FEIRA</span></a><div class="site-nav-links"><a href="#expositores">Expositores</a><a href="#localizacao">Como chegar</a><a href="#inscricoes">Inscrições</a></div></div></nav><div class="wrap"><header id="inicio"><div class="eyebrow">Aberto ao público • Entrada gratuita</div><h1>Feira da <span>Educação, Emprego</span> e Empreendedorismo</h1><p class="lead">Conheça os serviços, cursos, atividades e expositores participantes. Tudo em um só lugar.</p><div class="pills"><span class="pill">📅 07/11/2026 • Sábado</span><span class="pill">🕑 14h às 19h</span></div><a class="scroll-cue" href="#expositores" aria-label="Role para baixo para ver informações e expositores">Role para baixo e descubra mais <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></header><section id="expositores" class="feira-section feira-expositores" aria-labelledby="expositores-titulo"><div class="feira-divider" aria-hidden="true"><span class="feira-divider-line"></span><span class="feira-divider-label">EXPOSITORES</span><span class="feira-divider-line"></span></div><div class="intro"><h2 id="expositores-titulo">Expositores confirmados</h2><p>O primeiro cartaz reúne informações da feira. Toque em um expositor para ver o cartaz completo.</p></div><div class="gallery" id="gallery"></div></section><section id="localizacao" class="feira-section feira-localizacao" aria-labelledby="localizacao-titulo">
+<div class="feira-divider" aria-hidden="true"><span class="feira-divider-line"></span><span class="feira-divider-label">COMO CHEGAR</span><span class="feira-divider-line"></span></div>
+<div class="localizacao-layout">
+<div class="localizacao-copy">
+  <h2 id="localizacao-titulo">A feira acontece <span>no Tatuquara.</span></h2>
+  <p>Um encontro de educação, emprego e novas oportunidades, com entrada gratuita para todos.</p>
+</div>
 <div class="localizacao-card">
-<div class="localizacao-visual" aria-hidden="true"><div class="localizacao-visual-grid"></div><div class="localizacao-route localizacao-route-one"></div><div class="localizacao-route localizacao-route-two"></div><span class="localizacao-pin">⌖</span><span class="localizacao-visual-label">TATUQUARA <span>•</span> CURITIBA</span></div>
-<div class="localizacao-info"><div class="localizacao-eyebrow"><span class="localizacao-dot"></span> LOCAL DO EVENTO</div><h3>Como chegar</h3><div class="localizacao-address"><span class="localizacao-address-icon" aria-hidden="true">⌖</span><p><strong>Rua Odir Gomes da Rocha, 515</strong><span>Tatuquara, Curitiba – PR</span></p></div><div class="localizacao-date"><span aria-hidden="true">◷</span><span>Sábado, 7 de novembro <strong>·</strong> 14h às 19h</span></div><a class="localizacao-link" href="https://www.google.com/maps/search/?api=1&amp;query=Rua%20Odir%20Gomes%20da%20Rocha%2C%20515%2C%20Tatuquara%2C%20Curitiba%2C%20PR" target="_blank" rel="noopener noreferrer" aria-label="Abrir o endereço da feira no Google Maps"><span>Traçar rota no Google Maps</span><span class="localizacao-link-arrow" aria-hidden="true">↗</span></a><span class="localizacao-footnote">Entrada gratuita · Aberto ao público</span></div>
-</div></section><section id="inscricoes" class="feira-section feira-inscricoes-section" aria-labelledby="inscricoes-titulo"><div class="feira-divider" aria-hidden="true"><span class="feira-divider-line"></span><span class="feira-divider-dot"></span><span class="feira-divider-icon">✦</span><span class="feira-divider-dot"></span><span class="feira-divider-line"></span></div><div class="intro"><h2 id="inscricoes-titulo">Inscrições</h2><p>Confirme sua presença gratuitamente com sua conta Google.</p></div><section id="participar" class="participar" aria-labelledby="participar-titulo">
-  <div class="participar-kicker"><span class="participar-spark" aria-hidden="true"></span> SUA PRESENÇA IMPORTA</div>
+  <div class="localizacao-topline"><span>LOCAL DO EVENTO</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+  <h3>Rua Odir Gomes da Rocha, 515</h3>
+  <p class="localizacao-bairro">Tatuquara, Curitiba – PR</p>
+  <div class="localizacao-details"><span>Sábado, 7 de novembro de 2026</span><span>14h às 19h</span></div>
+  <a class="localizacao-link" href="https://www.google.com/maps/search/?api=1&amp;query=Rua%20Odir%20Gomes%20da%20Rocha%2C%20515%2C%20Tatuquara%2C%20Curitiba%2C%20PR" target="_blank" rel="noopener noreferrer" aria-label="Abrir endereço da feira no Google Maps"><span>Abrir no Google Maps</span><span class="localizacao-link-arrow" aria-hidden="true">↗</span></a>
+</div>
+</div></section><section id="inscricoes" class="feira-section feira-inscricoes-section" aria-labelledby="inscricoes-titulo"><div class="feira-divider" aria-hidden="true"><span class="feira-divider-line"></span><span class="feira-divider-label">INSCRIÇÕES</span><span class="feira-divider-line"></span></div><div class="intro intro-inscricoes"><h2 id="inscricoes-titulo">Confirme sua presença</h2><p>É gratuito e leva apenas alguns instantes.</p></div><section id="participar" class="participar" aria-labelledby="participar-titulo">
+  <div class="participar-kicker">PARTICIPAÇÃO GRATUITA</div>
   <div class="participar-top">
     <div>
-      <h2 id="participar-titulo">Vou participar <span>da feira!</span></h2>
-      <p>Confirme seu interesse gratuitamente e faça parte de um encontro de educação, emprego e novas oportunidades.</p>
+      <h2 id="participar-titulo">Sua presença faz <span>a diferença.</span></h2>
+      <p>Entre com sua conta Google para registrar sua participação.</p>
     </div>
-    <div class="participar-top-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="3"/><path d="M8 8V6a4 4 0 0 1 8 0v2M8 13l3 3 5-5"/></svg></div>
+
   </div>
   <div class="participar-main">
     <div id="participar-entrada">
@@ -261,7 +309,7 @@
         Continuar com Google
         <span class="participar-arrow" aria-hidden="true">→</span>
       </button>
-      <p class="participar-privacy">Use sua conta Google para confirmar a participação. Sem senha nova e sem esperar e-mail de confirmação. A organização terá acesso ao seu nome e e-mail para gerenciar as inscrições. Não recebemos sua senha do Google.</p>
+      <p class="participar-privacy">Usamos seu nome e e-mail somente para organizar as inscrições. Sua senha do Google não é compartilhada conosco.</p>
     </div>
     <div id="participar-conta" hidden>
       <div class="participar-perfil">
@@ -281,11 +329,7 @@
     </div>
     <div id="participar-msg" class="participar-status" role="status" aria-live="polite"></div>
   </div>
-  <div class="participar-assurances">
-    <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg> Entrada gratuita</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Identificação pelo Google</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg> Dados para organização do evento</span>
-  </div>
+
 </section></section><footer>Feira da Educação, Emprego e Empreendedorismo • Entrada gratuita • Respeito aos dados dos participantes</footer></div><div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Visualização ampliada" tabindex="-1"><button class="close" id="close" aria-label="Fechar imagem">×</button><img id="large" alt=""><p id="label"></p><span class="hint">Toque fora da imagem ou pressione Esc para fechar</span></div><script>
 const items=[];const gallery=document.getElementById('gallery');const overlay=document.getElementById('overlay');const large=document.getElementById('large');const label=document.getElementById('label');items.forEach((it,i)=>{const tile=document.createElement('article');tile.className='tile';const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ampliar '+it.title);const img=document.createElement('img');img.src=it.src;img.alt=it.title;img.loading=i<2?'eager':'lazy';img.decoding='async';const title=document.createElement('strong');title.textContent=it.title;b.append(img,title);tile.append(b);gallery.append(tile);b.addEventListener('click',()=>{large.src=it.src;large.alt=it.title;label.textContent=it.title;overlay.classList.add('open');document.body.style.overflow='hidden';document.getElementById('close').focus()})});function closeOverlay(){overlay.classList.remove('open');document.body.style.overflow='';large.removeAttribute('src')}document.getElementById('close').addEventListener('click',closeOverlay);overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay()});
 </script>
