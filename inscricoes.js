@@ -160,10 +160,10 @@
       if (error?.code === "23505" || /duplicate.key|unique.constraint/i.test(msg)) {
         say("✓ Este e-mail já tem uma inscrição. Para registrar outra pessoa, escolha outra conta Google.", "success");
         await loadHistory();
-      } else if (/row.level.security|permission.denied|42501/i.test(msg)) {
+      } else if (error?.code === "42501" || /row.level.security|permission.denied|42501/i.test(msg)) {
         say("O servidor recusou a inscrição. Tente novamente; se continuar, avise a organização.", "error");
       } else {
-        say("Não foi possível salvar sua participação: " + msg.slice(0, 180), "error");
+        say("Não foi possível salvar sua participação. Verifique sua conexão e tente novamente. Se continuar, avise a organização.", "error");
       }
     } finally {
       processing = false;
@@ -207,7 +207,7 @@
       if (error) throw error;
     } catch (error) {
       clearPending();
-      say("Não foi possível iniciar o Google: " + String(error?.message || "Tente novamente."), "error");
+      say("Não foi possível iniciar o login Google. Verifique sua conexão e tente novamente.", "error");
     } finally {
       connect.disabled = false;
     }
@@ -239,7 +239,7 @@
       if (error) throw error;
     } catch (error) {
       clearPending();
-      say("Não foi possível trocar a conta: " + String(error?.message || "Tente novamente."), "error");
+      say("Não foi possível trocar a conta. Tente novamente em instantes.", "error");
     } finally {
       processing = false;
       add.disabled = false;
@@ -259,7 +259,7 @@
       history.textContent = "";
       say("Você saiu da conta Google. A participação já confirmada continua salva.", "info");
     } catch (error) {
-      say("Não foi possível sair da conta: " + String(error?.message || ""), "error");
+      say("Não foi possível sair da conta. Verifique sua conexão e tente novamente.", "error");
     } finally {
       logout.disabled = false;
     }
@@ -278,7 +278,7 @@
     const oauthError = params.get("error_description") || hashParams.get("error_description");
     if (oauthError) {
       clearPending();
-      say("O login Google não foi concluído: " + oauthError.slice(0, 180), "error");
+      say("O login Google não foi concluído. Clique em Continuar com Google para tentar novamente.", "error");
       return;
     }
     try {
@@ -291,7 +291,7 @@
         say("Concluindo o retorno do Google. Se continuar sem conectar, clique novamente em Continuar com Google.");
       }
     } catch (error) {
-      say("Não foi possível restaurar a sessão: " + String(error?.message || "Tente de novo."), "error");
+      say("Não foi possível recuperar seu acesso. Clique em Continuar com Google para tentar novamente.", "error");
     }
   })();
 })();

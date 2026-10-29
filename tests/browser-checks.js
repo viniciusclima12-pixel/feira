@@ -1,0 +1,12 @@
+window.addEventListener('load',()=>{setTimeout(()=>{
+ const results=[];const check=(name,ok)=>results.push({name,ok});
+ const grid=document.getElementById('gallery'),overlay=document.getElementById('overlay'),close=document.getElementById('close');
+ const buttons=[...grid.querySelectorAll('button')];
+ check('Dados incompletos não interrompem a galeria',buttons.length===5);
+ check('Primeiro cartaz preservado',buttons[0]?.textContent.includes('Informações da feira'));
+ check('Título ausente recebe texto legível',grid.textContent.includes('Cartaz da feira'));
+ check('Datas válidas antes de inválidas',grid.querySelector('article:last-child')?.textContent.includes('Cartaz da feira'));
+ if(buttons.length){const button=buttons[0];button.focus();button.click();check('Modal abre com foco no botão fechar',overlay.classList.contains('open')&&document.activeElement===close);check('Fundo fica inerte',document.querySelector('.wrap').inert);close.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true}));check('Tab permanece no modal',document.activeElement===close);close.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',shiftKey:true,bubbles:true,cancelable:true}));check('Shift Tab permanece no modal',document.activeElement===close);close.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));check('Escape fecha e devolve foco',!overlay.classList.contains('open')&&document.activeElement===button);check('Fundo restaurado',!document.querySelector('.wrap').inert);button.click();close.click();check('Botão fechar devolve foco',document.activeElement===button);button.click();overlay.click();check('Clique no fundo fecha e devolve foco',!overlay.classList.contains('open')&&document.activeElement===button);}
+ check('Sem rolagem horizontal',document.documentElement.scrollWidth<=innerWidth);
+ const out=document.createElement('details');out.id='qa-results';out.open=true;out.style='margin:24px;padding:16px;background:#fff;color:#123';const title=document.createElement('summary');title.textContent='Testes reais DOM: '+results.filter(x=>x.ok).length+'/'+results.length;out.append(title);for(const r of results){const p=document.createElement('p');p.textContent=(r.ok?'PASS ':'FAIL ')+r.name;out.append(p)}document.body.append(out);
+ },50)});

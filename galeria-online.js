@@ -8,29 +8,62 @@
   const large=document.getElementById('large'),label=document.getElementById('label');
   if(!grid||!overlay||!large||!label)return;
   const originals=/^originais\/cartaz-(\d+)\.(png|jpe?g)$/i;
-  data.sort((a,b)=>{
-    if(a.posicao!=null||b.posicao!=null){const p=(a.posicao??999999)-(b.posicao??999999);if(p)return p;}
-    const ma=a.caminho.match(originals),mb=b.caminho.match(originals);
-    if(ma&&mb)return Number(ma[1])-Number(mb[1]);
-    if(ma)return -1;
-    if(mb)return 1;
-    return new Date(a.criado_em)-new Date(b.criado_em);
-  });
+  const position=value=>typeof value==='number'&&Number.isFinite(value)?value:Infinity;
+  const date=value=>{const parsed=typeof value==='string'?Date.parse(value):NaN;return Number.isFinite(parsed)?parsed:Infinity;};
+  const photos=(Array.isArray(data)?data:[])
+    .filter(photo=>photo&&typeof photo.caminho==='string'&&photo.caminho.trim())
+    .map((photo,order)=>({...photo,caminho:photo.caminho.trim(),titulo:typeof photo.titulo==='string'&&photo.titulo.trim()?photo.titulo.trim():'Cartaz da feira',order}))
+    .sort((a,b)=>{
+      const pa=position(a.posicao),pb=position(b.posicao);
+      if(pa!==pb)return pa<pb?-1:1;
+      const ma=a.caminho.match(originals),mb=b.caminho.match(originals);
+      if(ma&&mb&&Number(ma[1])!==Number(mb[1]))return Number(ma[1])-Number(mb[1]);
+      if(Boolean(ma)!==Boolean(mb))return ma?-1:1;
+      const da=date(a.criado_em),db=date(b.criado_em);
+      return da===db?a.order-b.order:da<db?-1:1;
+    });
   grid.replaceChildren();
-  if(!data.length){
+  if(!photos.length){
     const empty=document.createElement('p');
     empty.className='gallery-empty';
     empty.textContent='Os cartazes serão publicados em breve.';
     grid.append(empty);
     return;
   }
-  const openPoster=(photo,url)=>{
+  let opener=null,previousOverflow='';
+  const closeButton=document.getElementById('close');
+  if(!closeButton)return;
+  const background=[...document.body.children].filter(el=>!['SCRIPT','STYLE'].includes(el.tagName)&&el!==overlay);
+  const inertState=new Map();
+  const restore=()=>{
+    if(!opener)return;
+    document.body.style.overflow=previousOverflow;
+    for(const [el,wasInert] of inertState)el.inert=wasInert;
+    inertState.clear();
+    const target=opener;opener=null;
+    if(target.isConnected)target.focus();
+  };
+  const closePoster=()=>{overlay.classList.remove('open');large.removeAttribute('src');restore();};
+  closeButton.addEventListener('click',closePoster);
+  overlay.addEventListener('click',event=>{if(event.target===overlay)closePoster();});
+  document.addEventListener('keydown',event=>{
+    if(!opener)return;
+    if(event.key==='Escape'){event.preventDefault();closePoster();}
+    if(event.key==='Tab'){event.preventDefault();closeButton.focus();}
+  });
+  document.addEventListener('focusin',event=>{
+    if(overlay.classList.contains('open')&&!overlay.contains(event.target))closeButton.focus();
+  });
+  const openPoster=(photo,url,button)=>{
+    opener=button;previousOverflow=document.body.style.overflow;
+    for(const el of background){inertState.set(el,el.inert);el.inert=true;}
+
     large.src=url;large.alt=photo.titulo;label.textContent=photo.titulo;
     overlay.classList.add('open');document.body.style.overflow='hidden';
-    document.getElementById('close').focus();
+    closeButton.focus();
   };
   // O primeiro cartaz continua em destaque. Os demais são cartões compactos.
-  data.forEach((photo,index)=>{
+  photos.forEach((photo,index)=>{
     const url=client.storage.from('feira-fotos').getPublicUrl(photo.caminho).data.publicUrl;
     const tile=document.createElement('article');
     tile.className=index===0?'tile tile-featured':'tile tile-compact';
@@ -49,6 +82,6 @@
       tile.append(flag);
     }
     btn.append(img,info);tile.append(btn);grid.append(tile);
-    btn.addEventListener('click',()=>openPoster(photo,url));
+    btn.addEventListener('click',()=>openPoster(photo,url,btn));
   });
 })();

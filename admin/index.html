@@ -113,7 +113,15 @@ button:disabled{opacity:.5;cursor:wait}.secondary{background:#ffffff22;color:whi
  #inscricoes-items .trash-row{align-items:flex-start}
  #inscricoes-items .trash-row span{font-size:.77rem}
 }
-.photo-display-type{display:block;margin:0 0 8px;color:#e9ca86;font-size:.78rem;font-weight:800;overflow-wrap:anywhere}.photo-actions{flex-wrap:wrap}.photo-actions button{min-height:40px}.photo-actions button.featured:disabled{opacity:1;cursor:default;background:#e9ca86;color:#10263b}.photo-actions button.move:disabled:not(.featured){opacity:.35;cursor:default}</style></head><body><main>
+.photo-display-type{display:block;margin:0 0 8px;color:#e9ca86;font-size:.78rem;font-weight:800;overflow-wrap:anywhere}.photo-actions{flex-wrap:wrap}.photo-actions button{min-height:40px}.photo-actions button.featured:disabled{opacity:1;cursor:default;background:#e9ca86;color:#10263b}.photo-actions button.move:disabled:not(.featured){opacity:.35;cursor:default}</style><style>
+/* Controles legíveis e navegação confortável em telas pequenas. */
+h1{letter-spacing:-.035em;line-height:1.15}h2{line-height:1.35}.card{box-shadow:0 10px 28px #0002}
+button,input,a{touch-action:manipulation}button{min-height:44px}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+input{min-width:0;font-size:16px}input::placeholder{color:#aabed2;opacity:1}
+.photo h3,.photo strong{overflow-wrap:anywhere}.admin-header p{max-width:55ch}
+@media(max-width:520px){main{padding-inline:14px}.card{padding:20px 16px}.admin-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px}.admin-nav button{white-space:normal;line-height:1.4;padding:12px 8px}.admin-toolbar{gap:12px}.admin-toolbar input{width:100%;max-width:none}.photo-actions{gap:8px}.photo-actions button{min-height:44px}.row>*{min-width:0}.admin-header-actions{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style></head><body><main>
 <div class="row admin-header"><div><div style="color:var(--gold);font-weight:800;letter-spacing:.12em">FEIRA DA EDUCAÇÃO</div><h1>Painel administrativo</h1><p class="muted">Gerencie inscrições, cartazes e o visual do site.</p></div><div class="admin-header-actions"><a href="../">← Voltar ao site</a><button class="secondary hidden" id="logout" type="button">Sair da conta</button></div></div>
 <section id="setup" class="card hidden"><h2>Configuração pendente</h2><p>Confira as configurações públicas do Supabase em <code>config.js</code>.</p></section>
 <section id="login" class="card"><h2>Senha de administrador</h2><p class="muted">Use a mesma senha compartilhada com as pessoas autorizadas.</p>
