@@ -1,0 +1,169 @@
+/* Feira 2026 — linguagem visual editorial.
+   Um único arquivo para os ajustes novos; temas e funcionalidades permanecem independentes. */
+body.feira-redesign{
+ background:var(--navy,#061d34);
+ color:var(--text,#f4f6f8);
+ font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ -webkit-font-smoothing:antialiased;
+}
+.feira-redesign .wrap{max-width:1080px;padding-inline:clamp(18px,4vw,36px)}
+.feira-redesign a,.feira-redesign button{-webkit-tap-highlight-color:transparent}
+.feira-redesign a:focus-visible,.feira-redesign button:focus-visible{outline:2px solid var(--feira-accent,var(--gold));outline-offset:4px}
+.feira-redesign .site-nav{
+ background:var(--feira-nav-bg,#071d30f2);
+ box-shadow:none;
+ border-bottom:1px solid var(--feira-panel-outline,#ffffff24);
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+}
+.feira-redesign .site-nav-inner{max-width:1080px;min-height:68px;padding:10px clamp(18px,4vw,36px);gap:20px}
+.feira-redesign .site-nav-brand{font-size:.88rem;letter-spacing:.15em;color:var(--feira-ui-text,var(--text));font-weight:800;gap:10px}
+.feira-redesign .site-nav-brand-mark{width:31px;height:31px;flex:0 0 31px;border:1px solid var(--feira-accent-border);border-radius:6px;color:var(--feira-accent);font-family:Georgia,serif;font-size:1.1rem;font-weight:700}
+.feira-redesign .site-nav-links{gap:8px}
+.feira-redesign .site-nav-links a{font-size:.82rem;letter-spacing:.005em;font-weight:650;min-height:42px;padding:10px 13px;border-radius:7px;color:var(--feira-nav-text,var(--text))}
+.feira-redesign .site-nav-links a[aria-current="location"]{border-color:transparent;border-radius:0;box-shadow:inset 0 -2px 0 var(--feira-accent);background:transparent;color:var(--feira-accent)}
+.feira-redesign .site-nav-links a:hover{background:var(--feira-accent-soft);color:var(--feira-accent)}
+.feira-redesign header#inicio{
+ position:relative;text-align:left;
+ padding:clamp(72px,11vw,134px) 0 clamp(75px,10vw,110px);
+ border-bottom:1px solid var(--feira-panel-outline,#ffffff1d);
+}
+.feira-redesign header#inicio::before{content:"";position:absolute;top:clamp(33px,6vw,67px);left:0;width:54px;height:2px;background:var(--feira-accent)}
+.feira-redesign header#inicio .eyebrow{color:var(--feira-accent);letter-spacing:.18em;font-size:.74rem;font-weight:750}
+.feira-redesign header#inicio h1{
+ margin:17px 0 22px;max-width:950px;
+ font-family:Georgia,"Times New Roman",serif;
+ font-size:clamp(2.9rem,6.6vw,5.55rem);
+ font-weight:500;letter-spacing:-.045em;line-height:1.085;
+ color:var(--text,#fff);
+ text-wrap:balance;
+}
+.feira-redesign header#inicio h1 span{color:var(--feira-accent,var(--gold));font-style:italic;font-weight:500}
+.feira-redesign header#inicio .lead{max-width:610px;margin:0 0 33px;color:var(--muted,#c2cdd8);font-size:clamp(1rem,1.7vw,1.1rem);line-height:1.76}
+.feira-redesign .event-facts{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;max-width:650px;border-block:1px solid var(--feira-panel-outline,#ffffff26);padding:19px 0;margin-bottom:30px}
+.feira-redesign .event-fact{min-width:180px;display:flex;flex-direction:column;gap:3px;padding:1px 26px 1px 0;margin-right:26px}
+.feira-redesign .event-fact+.event-fact{border-left:1px solid var(--feira-panel-outline,#ffffff24);padding-left:27px}
+.feira-redesign .event-fact-label{font-size:.68rem;letter-spacing:.14em;font-weight:750;color:var(--feira-accent)}
+.feira-redesign .event-fact strong{font-size:.97rem;font-weight:650;color:var(--text)}
+.feira-redesign .hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.feira-redesign .hero-link{display:inline-flex;align-items:center;justify-content:center;gap:16px;min-height:49px;padding:12px 20px;border-radius:7px;border:1px solid var(--feira-accent-border);text-decoration:none;font-size:.92rem;font-weight:750;transition:background .16s,border-color .16s}
+.feira-redesign .hero-link-primary{background:var(--feira-button-bg);color:var(--feira-button-text,#14243a);border-color:transparent}
+.feira-redesign .hero-link-primary:hover{filter:brightness(1.08)}
+.feira-redesign .hero-link-secondary{color:var(--text);background:transparent}
+.feira-redesign .hero-link-secondary:hover{background:var(--feira-accent-soft)}
+.feira-redesign .hero-link span{font-size:1.1rem}
+.feira-redesign .feira-section .intro{text-align:left;margin:0 0 30px;max-width:700px}
+.feira-redesign .feira-section .intro h2{font-family:Georgia,serif;font-weight:500;font-size:clamp(2rem,3.8vw,2.85rem);letter-spacing:-.035em;line-height:1.17;color:var(--text)}
+.feira-redesign .feira-section .intro p{margin-top:12px;font-size:.96rem;line-height:1.72;color:var(--muted)}
+/* Divisórias intencionalmente idênticas nas três seções. */
+.feira-redesign .feira-divider{display:flex;align-items:center;justify-content:stretch;gap:16px;width:100%;max-width:none;height:24px;min-height:24px;margin:0 0 39px;padding:0;color:var(--feira-accent)}
+.feira-redesign .feira-divider-line{flex:1;height:1px;min-width:10px;max-width:none;opacity:.65;background:var(--feira-accent-border);transform:none}
+.feira-redesign .feira-divider-line:first-child{flex:0 0 39px;background:var(--feira-accent);opacity:1}
+.feira-redesign .feira-divider-label{display:inline-flex;align-items:center;gap:0;font-size:.7rem;letter-spacing:.18em;font-weight:800;line-height:1.5;white-space:nowrap}
+.feira-redesign .feira-divider-label::before,.feira-redesign .feira-divider-label::after{content:none}
+.feira-redesign .feira-expositores{padding:65px 0 0;margin:0}
+.feira-redesign .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0}
+.feira-redesign .gallery .tile{border:1px solid var(--feira-panel-outline);border-radius:11px;background:var(--feira-panel-bg);box-shadow:none;overflow:hidden;transition:border-color .15s}
+.feira-redesign .gallery .tile:hover{transform:none;border-color:var(--feira-accent-border);box-shadow:none}
+.feira-redesign .gallery .tile-compact button{min-height:115px;gap:0;align-items:stretch;cursor:zoom-in}
+.feira-redesign .gallery .tile-compact img{width:112px;height:115px;flex:0 0 112px;max-height:none;padding:10px;object-fit:contain;object-position:center;background:var(--feira-panel-inner);border-right:1px solid var(--feira-panel-outline)}
+.feira-redesign .gallery .tile-info{min-width:0;padding:17px 16px;gap:9px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.feira-redesign .gallery .tile-info strong{font-family:inherit;font-size:1rem;line-height:1.35;letter-spacing:-.01em;font-weight:720;color:var(--feira-ui-text);padding:0;margin:0;overflow-wrap:anywhere}
+.feira-redesign .gallery .tile-action{font-size:.77rem;letter-spacing:.03em;font-weight:700;color:var(--feira-accent)}
+.feira-redesign .gallery .tile-featured{grid-column:1/-1;max-width:none;width:100%;margin:0 0 20px;background:var(--feira-panel-bg);border:1px solid var(--feira-panel-outline);border-radius:12px;justify-self:auto}
+.feira-redesign .gallery .tile-featured button{display:flex;align-items:center;min-height:0;gap:0}
+.feira-redesign .gallery .tile-featured img{width:min(48%,470px);flex:0 0 min(48%,470px);height:clamp(280px,42vw,470px);max-height:none;object-fit:contain;padding:18px;background:var(--feira-panel-inner)}
+.feira-redesign .gallery .tile-featured .tile-info{padding:clamp(23px,4vw,50px)}
+.feira-redesign .gallery .tile-featured .tile-info strong{font-family:Georgia,serif;font-size:clamp(1.35rem,3vw,2.2rem);font-weight:500;line-height:1.2}
+.feira-redesign .gallery .tile-featured-label{position:absolute;z-index:2;top:15px;left:15px;background:var(--feira-nav-bg);border:1px solid var(--feira-accent-border);color:var(--feira-accent);border-radius:4px;box-shadow:none;padding:6px 9px;font-size:.66rem;font-weight:750;letter-spacing:.07em}
+.feira-redesign .feira-localizacao{margin:0;padding:clamp(88px,11vw,136px) 0 clamp(90px,11vw,125px)}
+.feira-redesign .feira-localizacao::before{display:none}
+.feira-redesign .feira-localizacao .feira-divider{margin:0 0 43px}
+.feira-redesign .localizacao-layout{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:clamp(28px,5.3vw,75px);align-items:center}
+.feira-redesign .localizacao-copy h2{font-family:Georgia,serif;font-size:clamp(2.25rem,4.5vw,3.65rem);font-weight:500;letter-spacing:-.04em;line-height:1.17;margin:0 0 20px;color:var(--text)}
+.feira-redesign .localizacao-copy h2 span{color:var(--feira-accent)}
+.feira-redesign .localizacao-copy p{font-size:1rem;line-height:1.78;max-width:370px;color:var(--muted)}
+.feira-redesign .localizacao-card{display:block;border-radius:11px;overflow:hidden;border:1px solid var(--feira-panel-outline);box-shadow:none;background:var(--feira-panel-bg);padding:clamp(25px,4vw,40px)}
+.feira-redesign .localizacao-topline{margin:0 0 27px;font-size:.7rem;font-weight:750;letter-spacing:.17em;color:var(--feira-accent)}
+.feira-redesign .localizacao-topline svg{width:23px;height:23px}
+.feira-redesign .localizacao-card h3{font-size:clamp(1.26rem,2.2vw,1.58rem);font-weight:700;letter-spacing:-.025em;line-height:1.32;margin:0 0 6px;color:var(--feira-ui-text)}
+.feira-redesign .localizacao-bairro{font-size:.91rem;color:var(--feira-ui-muted);margin:0 0 24px!important}
+.feira-redesign .localizacao-details{display:flex;gap:13px 18px;flex-wrap:wrap;border-color:var(--feira-panel-outline);font-size:.83rem;margin:0 0 23px;padding:17px 0;color:var(--feira-ui-muted)}
+.feira-redesign .localizacao-link{display:flex;width:100%;min-height:51px;border-radius:7px;background:var(--feira-button-bg);color:var(--feira-button-text,#132338)!important;box-shadow:none;padding:11px 16px;text-decoration:none;font-weight:750}
+.feira-redesign .localizacao-link:hover{transform:none;filter:brightness(1.07)}
+.feira-redesign .localizacao-link-arrow{font-size:1.25rem}
+.feira-redesign .feira-inscricoes-section{padding:0 0 52px}
+.feira-redesign .feira-inscricoes-section .feira-divider{margin:0 0 38px}
+.feira-redesign .intro-inscricoes{margin:0 0 25px!important}
+.feira-redesign .participar{max-width:none;margin:0;padding:clamp(26px,5vw,52px);border:1px solid var(--feira-panel-outline);border-radius:12px;background:var(--feira-panel-bg);box-shadow:none;overflow:hidden}
+.feira-redesign .participar::before,.feira-redesign .participar::after{content:none;display:none}
+.feira-redesign .participar-kicker{letter-spacing:.16em;font-size:.7rem;color:var(--feira-accent);font-weight:800}
+.feira-redesign .participar-top h2{font-family:Georgia,serif;font-size:clamp(1.95rem,4vw,3.15rem);font-weight:500;letter-spacing:-.038em;line-height:1.16}
+.feira-redesign .participar-top p{font-size:.98rem;line-height:1.72;max-width:580px}
+.feira-redesign .participar-main{margin-top:29px;border:0;border-top:1px solid var(--feira-panel-outline);padding:27px 0 0;background:none;box-shadow:none;backdrop-filter:none}
+.feira-redesign .participar .participar-google{max-width:460px;width:100%;min-height:54px;display:flex;gap:13px;border:1px solid #d8e0e8;border-radius:7px;background:#fff;color:#1d3045;font-size:.95rem;font-weight:700;letter-spacing:0;box-shadow:none;padding:13px 18px}
+.feira-redesign .participar .participar-google:hover{transform:none;background:#f7f9fb;box-shadow:none}
+.feira-redesign .participar .participar-google svg{width:21px;height:21px}
+.feira-redesign .participar-arrow{color:#69798b;font-size:1.14rem}
+.feira-redesign .participar-privacy{max-width:600px;margin:15px 0 0!important;font-size:.81rem;line-height:1.7!important;color:var(--feira-ui-muted)!important}
+.feira-redesign .participar-avatar{border-radius:9px;box-shadow:none}
+.feira-redesign .participar .participar-novo,.feira-redesign .participar .participar-trocar{border-radius:7px;box-shadow:none}
+.feira-redesign .participar-status:not(:empty){border-radius:8px}
+.feira-redesign footer{margin-top:0;border-top:1px solid var(--feira-panel-outline);padding:25px 0 38px;text-align:left;font-size:.78rem;letter-spacing:.02em;color:var(--muted)}
+/* Reduz ruídos visuais, mas mantém ações e estados legíveis. */
+@media(max-width:800px){
+ .feira-redesign .gallery{grid-template-columns:1fr}
+ .feira-redesign .gallery .tile-featured img{width:45%;flex-basis:45%}
+ .feira-redesign .localizacao-layout{grid-template-columns:1fr;gap:25px}
+ .feira-redesign .localizacao-copy p{max-width:640px}
+}
+@media(max-width:560px){
+ .feira-redesign .wrap{padding-inline:18px}
+ .feira-redesign .site-nav-inner{min-height:60px;gap:8px;padding:9px 12px}
+ .feira-redesign .site-nav-brand{gap:5px;font-size:.75rem;letter-spacing:.08em}
+ .feira-redesign .site-nav-brand-mark{width:26px;height:26px;flex:0 0 26px;font-size:.9rem}
+ .feira-redesign .site-nav-links{gap:1px}
+ .feira-redesign .site-nav-links a{padding:8px 6px;font-size:.72rem;min-height:42px}
+ .feira-redesign header#inicio{padding:75px 0 60px}
+ .feira-redesign header#inicio::before{top:34px;width:36px}
+ .feira-redesign header#inicio h1{font-size:clamp(2.5rem,11.1vw,3.65rem);line-height:1.11;margin:16px 0}
+ .feira-redesign header#inicio .lead{margin-bottom:25px;font-size:.99rem;line-height:1.7}
+ .feira-redesign .event-facts{padding:16px 0;margin-bottom:23px}
+ .feira-redesign .event-fact{min-width:0;flex:1 1 120px;padding:0;margin-right:0}
+ .feira-redesign .event-fact+.event-fact{padding-left:16px}
+ .feira-redesign .event-fact strong{font-size:.88rem}
+ .feira-redesign .hero-actions{gap:10px}
+ .feira-redesign .hero-link{min-height:49px;flex:1 1 auto;padding:12px 14px;font-size:.85rem}
+ .feira-redesign .feira-expositores{padding-top:47px}
+ .feira-redesign .feira-divider,.feira-redesign .feira-localizacao .feira-divider,.feira-redesign .feira-inscricoes-section .feira-divider{gap:11px;height:24px;min-height:24px;margin:0 0 26px;padding:0}
+ .feira-redesign .feira-divider-line:first-child{flex-basis:19px}
+ .feira-redesign .feira-divider-label{font-size:.66rem;letter-spacing:.13em}
+ .feira-redesign .feira-section .intro{text-align:left;margin-bottom:22px}
+ .feira-redesign .feira-section .intro h2{font-size:2rem}
+ .feira-redesign .gallery{gap:10px}
+ .feira-redesign .gallery .tile-featured{margin-bottom:12px}
+ .feira-redesign .gallery .tile-featured button{display:block}
+ .feira-redesign .gallery .tile-featured img{display:block;width:100%;height:auto;max-height:470px;padding:12px;object-fit:contain}
+ .feira-redesign .gallery .tile-featured .tile-info{padding:21px 20px 22px}
+ .feira-redesign .gallery .tile-featured .tile-info strong{font-size:1.48rem}
+ .feira-redesign .gallery .tile-compact img{width:96px;flex-basis:96px;height:110px;max-height:none}
+ .feira-redesign .gallery .tile-compact button{min-height:110px}
+ .feira-redesign .gallery .tile-info{padding:13px 14px}
+ .feira-redesign .gallery .tile-info strong{font-size:.92rem}
+ .feira-redesign .feira-localizacao{padding:82px 0 95px}
+ .feira-redesign .localizacao-copy h2{font-size:2.15rem}
+ .feira-redesign .localizacao-card{padding:23px 21px}
+ .feira-redesign .participar{padding:24px 20px;border-radius:10px}
+ .feira-redesign .participar-top h2{font-size:2.05rem}
+ .feira-redesign .participar-main{margin-top:24px;padding-top:24px}
+ .feira-redesign footer{text-align:center;line-height:1.7}
+}
+@media(max-width:365px){
+ .feira-redesign .site-nav-inner{padding:7px 8px}
+ .feira-redesign .site-nav-links a{font-size:.65rem;padding:7px 4px}
+ .feira-redesign .site-nav-brand{font-size:.68rem}
+ .feira-redesign .hero-actions{flex-direction:column;align-items:stretch}
+ .feira-redesign .hero-link{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+ .feira-redesign .hero-link,.feira-redesign .gallery .tile,.feira-redesign .localizacao-link,.feira-redesign .participar .participar-google{transition:none}
+}
